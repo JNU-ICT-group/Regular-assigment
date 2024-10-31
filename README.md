@@ -16,5 +16,6 @@ tips：
     5记得PULL拉取和同步远程仓库代码到本地分支，不然无法同步别人的代码操作。   
   一般main分支是代码最稳定的版本。   
   ![failedtoopen](git操作解释1.png)   
+        
   ![failedtoopen](git操作解释2.png)       
   2024.10.31-zpy
