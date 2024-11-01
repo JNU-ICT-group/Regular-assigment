@@ -16,9 +16,9 @@ from pathlib import Path
 # Non-standard library
 import numpy as np
 
-__author__ = "Guo, Jiangling"
-__email__ = "tguojiangling@jnu.edu.cn"
-__version__ = "20201014.1050"
+__author__ = "Guo, Jiangling; Chen, Jin; "
+__email__ = "tguojiangling@jnu.edu.cn; miracle@stu2022.jnu.edu.cn; "
+__version__ = "20241031.1001"
 
 def main():
     """Entry point of this program."""

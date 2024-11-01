@@ -31,13 +31,19 @@ for %%I in ("%~dp0.") do set "_SCRIPT_DIR=%%~fI"
 pushd %_SCRIPT_DIR%
 
 if exist "%_RESULT_FILE%" del "%_RESULT_FILE%"
+echo Output "%_RESULT_FILE%"
 
 :: Action.
-echo:Unit test is running...
-call %_CMD% "%_DATA_DIR%\DMS.p0=0.7.len=1MB.dat" "%_DATA_DIR%\BSC.p=0.2.DMS.p0=0.7.len=1MB.dat" "%_RESULT_FILE%"
-call %_CMD% "%_DATA_DIR%\DMS.p0=0.7.len=1MB.dat" "%_DATA_DIR%\BSC.p=0.5.DMS.p0=0.7.len=1MB.dat" "%_RESULT_FILE%"
-call %_CMD% "%_DATA_DIR%\DMS.p0=0.9.len=1MB.dat" "%_DATA_DIR%\BSC.p=0.2.DMS.p0=0.9.len=1MB.dat" "%_RESULT_FILE%"
-echo:Unit test completed.
+echo Unit test is running...
+
+for %%f in ("%_DATA_DIR%\DMS.*.dat") do (
+    echo Processing X "%_DATA_DIR%\%%~nxf" ...
+    for %%j in ("%_DATA_DIR%\BSC.*.%%~nxf") do (
+        echo Processing Y "%_DATA_DIR%\%%~nxj"
+        call %_CMD% "%_DATA_DIR%\%%~nxf" "%_DATA_DIR%\%%~nxj" "%_RESULT_FILE%"
+    )
+)
+echo Unit test completed.
 echo:
 
 :: Show results.
