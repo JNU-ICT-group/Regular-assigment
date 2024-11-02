@@ -1,0 +1,111 @@
+def byte_source(input_path, output_path, msg_len):
+    """
+    模拟256元离散无记忆信源，生成符合指定概率分布的长消息并输出到文件中。
+    这里是lab2的信源代码
+    Parameters:
+        input_path (str): 输入符号概率分布的CSV文件路径。
+        output_path (str): 输出文件的路径，用于保存生成的符号序列。
+        msg_len (int): 生成的消息长度（符号数量）。
+    """
+
+    # Step 1: 从CSV文件中读取符号概率分布
+    symbol_prob = np.zeros(256)  # 初始化一个大小为256的数组来保存概率分布
+    with open(input_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            symbol, prob = int(row[0]), float(row[1])
+            symbol_prob[symbol] = prob
+
+    # 检查概率分布是否符合要求（所有概率之和应为1）
+    if not np.isclose(symbol_prob.sum(), 1.0):
+        raise ValueError("输入的概率分布不符合要求，所有概率之和必须为1。")
+
+    # Step 2: 计算累积概率分布 F(i)
+    symbol_cumsum = symbol_prob.cumsum()
+
+    # Step 3: 生成符合均匀分布的随机数，并通过累积概率分布查找对应符号
+    symbol_random = np.random.uniform(size=msg_len)
+    msg = np.searchsorted(symbol_cumsum, symbol_random)
+
+    # Step 4: 将生成的符号序列保存到输出文件
+    with open(output_path, 'w') as f:
+        f.write(",".join(map(str, msg)))
+
+
+def probability(x):
+    (hist, bin_edges) = np.histogram(x, bins=range(257))
+    P = hist/x.size
+    return P
+
+def quick_test(symbol_prob, msg_len=100000, num_tests=10):
+    """
+    快速测试byte_source生成符号序列的概率分布是否符合给定的概率分布。
+
+    Parameters:
+        symbol_prob (numpy.ndarray): 符号的概率分布。
+        msg_len (int): 生成的消息长度（符号数量）。
+        num_tests (int): 测试的轮数。
+
+    Returns:
+        bool: 测试是否通过。
+    """
+    # 写入临时CSV文件
+    temp_csv_path = "temp_prob_dist.csv"
+    with open(temp_csv_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        for i, prob in enumerate(symbol_prob):
+            writer.writerow([i, prob])
+
+    # 生成临时输出文件路径
+    temp_output_path = "temp_output.csv"
+
+    for _ in range(num_tests):
+        # 调用算法函数生成符号序列
+        byte_source(temp_csv_path, temp_output_path, msg_len)
+
+        # 读取生成的符号序列
+        with open(temp_output_path, 'r') as f:
+            msg = np.array(list(map(int, f.read().split(','))))
+
+        # 计算生成符号序列的概率分布
+        #P = np.bincount(msg, minlength=256) / len(msg)
+        #print("P relative error =", abs(P - symbol_prob) / symbol_prob)
+        P = probability(msg)
+
+        # 判断相对误差是否在可接受范围内（例如小于1）
+        relative_error = abs(P - symbol_prob) / symbol_prob
+        if not np.all(relative_error <= 1):
+            print("relative errors:", relative_error)
+            return False
+
+    # 删除临时文件
+    os.remove(temp_csv_path)
+    os.remove(temp_output_path)
+
+    return True
+-------------------------------------------------------------------------------
+“
+测试以P2为错误传输概率的byteChannel信道输出是否符合设置值
+”
+def calculate_error_rate_test(input_file, output_file):
+    with open(input_file, 'rb') as f_in, open(output_file, 'rb') as f_out:
+        input_data = f_in.read()
+        output_data = f_out.read()
+
+    # 确保两个文件长度一致
+    assert len(input_data) == len(output_data), "Input and output files must have the same length"
+
+    # 计算比特错误数量
+    error_count = sum(1 for in_bit, out_bit in zip(input_data, output_data) if in_bit != out_bit)
+    total_bits = len(input_data) * 8  # 每个字节8个比特
+
+    error_rate = error_count / total_bits
+    return error_rate
+
+def test_error_probability_test(input_file, output_file, expected_P2):
+    error_rate = calculate_error_rate_test(input_file, output_file)
+    print(f"Measured error rate: {error_rate}")
+    
+    # 验证错误率是否接近预期值（允许小范围误差，例如0.02）
+    assert np.isclose(error_rate, expected_P2, atol=0.02), \
+        f"Error rate mismatch: expected {expected_P2}, got {error_rate}"
