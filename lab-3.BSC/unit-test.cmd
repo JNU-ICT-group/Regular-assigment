@@ -32,6 +32,7 @@ pushd %_SCRIPT_DIR%
 
 if exist "%_RESULT_FILE%" del "%_RESULT_FILE%"
 echo Output "%_RESULT_FILE%"
+if not exist "%_EXPECT_FILE%" type > "%_EXPECT_FILE%"
 
 :: Action.
 echo Unit test is running...

@@ -29,7 +29,7 @@ def main(input_path, output_path, noise_path, **kwgs):
     for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
         if kwgs['message_state']:
             print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
-            work_flow(input_path, output_path, noise_path, **kwgs)
+        work_flow(input_path, output_path, noise_path, **kwgs)
 
 
 def path_split(path):
@@ -54,7 +54,7 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
         print()
     arr = read_input(input_path)
     noise = read_input(noise_path)
-    if len(arr)*8 != len(noise):
+    if len(arr)*8 != len(noise) and len(arr) != len(noise):
         raise ValueError("NOISE must have the size 8-times longer than INPUT, "
                          "while NOISE values only 1-bits.")
     out = generate_error_channel(arr, noise)
@@ -80,7 +80,8 @@ def generate_error_channel(arr, noise) -> np.ndarray:
     概率为p（二元对称信道错误传输概率），即0的概率为1-p，随后将二元结果以8个一组，合并为长度同arr的，即N=8次扩展。然后使用
     异或加载到256元的arr信源。这种方法仅适用于BSC
     """
-    noise = np.packbits(noise)
+    if len(arr) * 8 == len(noise):
+        noise = np.packbits(noise)
     out = np.bitwise_xor(arr, noise)
     return out
 
