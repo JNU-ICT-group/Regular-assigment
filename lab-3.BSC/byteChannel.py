@@ -12,19 +12,19 @@ import argparse
 import time
 import csv
 from pathlib import Path
-
+import struct
 # Non-standard library
 import numpy as np
 
-__author__ = "Chen, Jin; "
+__author__ = "Guo, Jiangling; "
 __email__ = "miracle@stu2022.jnu.edu.cn; "
-__version__ = "20241031.1001"
+__version__ = "20241104.1635"
 
 
-def main(input_path, output_path, noise, **kwgs):
+def main(input_path, noise_path, output_path, **kwgs):
     input_paths = path_split(input_path)
     output_paths = path_split(output_path)
-    noises = tuple(map(float, path_split(noise)))
+    noises = path_split(noise_path)
 
     if len(input_paths) * len(noises) != len(output_paths):
         raise ValueError("INPUT(%d),OUTPUT(%d),NOISE(%d) must have the size like "
@@ -39,83 +39,94 @@ def main(input_path, output_path, noise, **kwgs):
             output_path = next(output_paths)
             if kwgs['message_state']:
                 print('\tProcessing OUTPUT "%s" with noise=%.4f...' % (output_path, noise))
-            work_flow(input_path, output_path, noise, **kwgs)
+            work_flow(input_path, noise, output_path, **kwgs)
 
 
 def path_split(path):
     return tuple(filter(None, map(str.strip, ''.join(filter(lambda c: "'" != c != '"', path)).split(';'))))
 
 
-def work_flow(input_path, output_path, noise, **kwgs):
+def work_flow(input_path, noise_path, output_path, **kwgs):
     if kwgs.get('base_path'):
         input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
     if kwgs['message_state'] == 1:
         print('Input path:', input_path)
+        print('Noise path:', noise_path)
         print('Output path:', output_path)
     if not os.path.isfile(input_path):
         raise RuntimeError("input_path must be an exist folder or file.")
+    if os.path.exists(noise_path) and not os.path.isfile(noise_path):
+        raise RuntimeError("noise_path must be a file, not a folder.")
     if os.path.exists(output_path) and not os.path.isfile(output_path):
         raise RuntimeError("output_path must be a file, not a folder.")
 
-    if noise<0 or noise>1:
-        raise ValueError("Noise Probability must be a number between [0,1).")
-
-    x = read_input(input_path)          # do work for one single file `in_file`
-
+    input_data = read_input(input_path)
+    noise_data = read_input(noise_path)
 
     if kwgs['message_state'] == 1:
         print()
-    write_output
+
+    write_output(output_path, byte_channel(input_data, noise_data))
 
 
-def read_input(input_path) -> np.ndarray:
+def read_input(input_path):
+    # 使用 NumPy 直接读取文件并转换为 uint8 数组
+    uint8_array = np.fromfile(input_path, dtype=np.uint8)
+    return uint8_array
+
+
+def byte_channel(input_data, noise_data):
     """
-    从CSV文件中读取符号概率分布。
+    模拟二元对称信道 (BSC)，将噪声作用在输入消息上。
 
     Parameters:
-        input_path (str): 。
-
-    Returns:
-        numpy.ndarray: 。
+        input_data (str): 输入消息文件的路径。
+        noise_data (str): 噪声文件的路径。
     """
+    # 检查输入和噪声文件大小是否一致
+    if len(input_data) != len(noise_data):
+        raise ValueError("输入文件和噪声文件的大小必须相同。")
+    output_data = np.bitwise_xor(input_data, noise_data)
+    print(len(output_data))
+    return output_data
 
 
-def generate_error_channel(arr, p) -> np.ndarray:
-    """
-    使用np.searchsorted对np.random.uniform的结果做2分类（长度为arr的长度的8倍），使其中1的
-    概率为p（二元对称信道错误传输概率），即0的概率为1-p，随后将二元结果以8个一组，合并为长度同arr的，即N=8次扩展。然后使用
-    异或加载到256元的arr信源。这种方法仅适用于BSC
-    """
-
-    pass
+def write_output(output_path, output_data):
+    # 将结果写入输出文件
+    with open(output_path, 'wb') as out_file:
+        out_file.write(bytearray(output_data))
+    print(f"输出文件已保存到 {output_path}")
 
 
-def write_output(output_path, sequence) -> None:
-    """
+def calculate_error_rate_test(input_file, output_file):
+    with open(input_file, 'rb') as f_in, open(output_file, 'rb') as f_out:
+        input_data = f_in.read()
+        output_data = f_out.read()
 
-    Parameters:
-        output_path (str): 输出文件的路径。
-        sequence (numpy.ndarray): 生成的符号序列。
-    """
+    # 确保两个文件长度一致
+    assert len(input_data) == len(output_data), "Input and output files must have the same length"
+
+    # 计算比特错误数量
+    error_count = sum(1 for in_bit, out_bit in zip(input_data, output_data) if in_bit != out_bit)
+    total_bits = len(input_data) * 8  # 每个字节8个比特
+
+    error_rate = error_count / total_bits
+    return error_rate
 
 
-def quick_test(symbol_prob, msg_len=100000, num_tests=10) -> bool:
-    """
-    快速测试生成符号序列的概率分布是否符合给定的概率分布。
+def test_error_probability_test(input_file, output_file):
+    error_rate = calculate_error_rate_test(input_file, output_file)
+    print(f"Measured error rate: {error_rate}")
 
-    Parameters:
-        symbol_prob (numpy.ndarray): 符号的概率分布。
-        msg_len (int): 生成的消息长度（符号数量）。
-        num_tests (int): 测试的轮数。
-
-    Returns:
-        bool: 测试是否通过。
-    """
-    return True
+    # 验证错误率是否接近预期值（允许小范围误差，例如0.02）
+    assert np.isclose(error_rate, 0.25, atol=0.02), \
+        f"Error rate mismatch: expected {0.25}, got {error_rate}"
 
 
 def test_flow() -> None:
+    test_error_probability_test("test.dat`", "testout.dat")
+
     all_tests_passed = True
 
     # 检查是否所有测试都通过
@@ -139,7 +150,7 @@ def parse_sys_args() -> dict:
     args = parser.parse_args()
     return dict(
         input_path=args.INPUT,
-        noise=args.NOISE,
+        noise_path=args.NOISE,
         output_path=args.OUTPUT,
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,
