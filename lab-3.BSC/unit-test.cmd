@@ -41,7 +41,7 @@ for %%f in ("%_DATA_DIR%\DMS.*.dat") do (
     echo Processing X "%_DATA_DIR%\%%~nxf" ...
     for %%j in ("%_DATA_DIR%\BSC.*.%%~nxf") do (
         echo Processing Y "%_DATA_DIR%\%%~nxj"
-        call %_CMD% "%_DATA_DIR%\%%~nxf" "%_DATA_DIR%\%%~nxj" "%_RESULT_FILE%" --export "%_EXPECT_FILE%" -v
+        call %_CMD% "%_DATA_DIR%\%%~nxf" "%_DATA_DIR%\%%~nxj" "%_RESULT_FILE%" --export "%_EXPECT_FILE%"    -v
     )
 )
 echo Unit test completed.
