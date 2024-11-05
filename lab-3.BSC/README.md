@@ -2,6 +2,14 @@
 
 A program to calculate information contents and parameters for a Binary Symmetric Channel (BSC).
 
+## Environment
+
+- Python 3.x
+- argparse
+- numpy
+- pathlib
+- csv
+
 ## Usage
 
 - Basic usage
