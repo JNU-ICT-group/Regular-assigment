@@ -14,13 +14,17 @@ setlocal enabledelayedexpansion
 set "_DATA_DIR=input"
 
 :: Directory for Outputs
-set "_OUT_DIR=output"
+set "_OUT_DIR=unit-test"
 
 :: Error transmission probabilities of BSCs
-set _ERRORS=0.1,0.3,0.6,0.8
+set _CREATE=0.2,0.5,0.7
+set _ERRORS=0.1,0.5,0.8
 
 :: Command to run calcBSCInfo
 set "_CMD=python byteChannel.py"
+set "_Source=python byteSource.py"
+set "_Generate=python generate.py"
+set "MSG_LENGTH=102400"
 
 :: ----- Config : end
 
@@ -32,22 +36,48 @@ pushd %_SCRIPT_DIR%
 
 :: Action.
 echo:Unit generation is running...
+if not exist %_DATA_DIR% mkdir %_DATA_DIR%
+if not exist %_OUT_DIR% mkdir %_OUT_DIR%
 
+set CSV_P=
+set DATA_P=
+set CSV_N=
 set INPUT=
 set OUTPUT=
 set NOISE=
+set /A NOISE_LENGTH=%MSG_LENGTH%
 
-for %%f in ("%_DATA_DIR%\DMS.*.dat") do (
-    set INPUT=!INPUT!;%_DATA_DIR%\%%~nxf
-@REM     echo "!INPUT!"
+
+for %%j in (%_CREATE%) do (
+    set CSV_P=!CSV_P!;%_DATA_DIR%\DMS.p0=%%j.csv
+    set DATA_P=!DATA_P!;%_OUT_DIR%\DMS.p0=%%j.dat
 )
+call %_Generate% %_CREATE% %CSV_P%
+
+set CSV_P=
+set DATA_P=
+for %%f in ("%_DATA_DIR%\DMS.*.csv") do (
+    set CSV_P=!CSV_P!;%_DATA_DIR%\%%~nxf
+    set DATA_P=!DATA_P!;%_OUT_DIR%\%%~nxf.dat
+)
+@REM echo "%CSV_P% %DATA_P%"
+call %_Source% %CSV_P% %DATA_P% %MSG_LENGTH%
+
 for %%j in (%_ERRORS%) do (
-    set NOISE=!NOISE!;%%j
-@REM     echo "!NOISE!"
+    set NOISE=!NOISE!;%_DATA_DIR%\BSC.p=%%j.dat
+    set CSV_N=!CSV_N!;%_DATA_DIR%\BSC.p=%%j.csv
 )
-for %%f in ("%_DATA_DIR%\DMS.*.dat") do (
+@REM echo "%NOISE% %CSV_N%"
+call %_Generate% %_ERRORS% %CSV_N%
+call %_Source% %CSV_N% %NOISE% %NOISE_LENGTH%
+
+
+set NOISE=
+for %%f in ("%_OUT_DIR%\DMS.*.dat") do (
     for %%j in (%_ERRORS%) do (
-        set OUTPUT=!OUTPUT!;%_OUT_DIR%\BSC.p=%%j.%%~nxf
+        set INPUT=!INPUT!;%%~nxf
+        set NOISE=!NOISE!;%_DATA_DIR%\BSC.p=%%j.dat
+        set OUTPUT=!OUTPUT!;BSC.p=%%j.%%~nxf
 @REM     echo "!OUTPUT!"
     )
 )
@@ -55,8 +85,9 @@ for %%f in ("%_DATA_DIR%\DMS.*.dat") do (
 @REM echo %NOISE%
 @REM echo %OUTPUT%
 @REM echo %_DATA_DIR%
-call %_CMD% "%INPUT%" "%NOISE%" "%OUTPUT%" -S
+call %_CMD% "%INPUT%" "%NOISE%" "%OUTPUT%" -d %_OUT_DIR% -S
 
+@REM del /Q %_TEMP_DIR%
 echo:Unit generation completed.
 echo:
 

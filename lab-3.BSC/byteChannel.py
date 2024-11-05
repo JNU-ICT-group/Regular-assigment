@@ -21,74 +21,76 @@ __email__ = "miracle@stu2022.jnu.edu.cn; "
 __version__ = "20241031.1001"
 
 
-def main(input_path, output_path, noise, **kwgs):
+def main(input_path, output_path, noise_path, **kwgs):
     input_paths = path_split(input_path)
     output_paths = path_split(output_path)
-    noises = tuple(map(float, path_split(noise)))
+    noise_paths = path_split(noise_path)
 
-    if len(input_paths) * len(noises) != len(output_paths):
-        raise ValueError("INPUT(%d),OUTPUT(%d),NOISE(%d) must have the size like "
-                         "INPUT.length*NOISE.length = OUTPUT.length." %
-                         (len(input_paths), len(output_paths), len(noises)))
-
-    output_paths = iter(output_paths)
-    for input_path in input_paths:
+    for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
         if kwgs['message_state']:
-            print('Processing INPUT "%s" ...' % input_path)
-        for noise in noises:
-            output_path = next(output_paths)
-            if kwgs['message_state']:
-                print('\tProcessing OUTPUT "%s" with noise=%.4f...' % (output_path, noise))
-            work_flow(input_path, output_path, noise, **kwgs)
+            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
+        work_flow(input_path, output_path, noise_path, **kwgs)
 
 
 def path_split(path):
-    return tuple(filter(None, map(str.strip, ''.join(filter(lambda c: "'" != c != '"', path)).split(';'))))
+    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
-def work_flow(input_path, output_path, noise, **kwgs):
+def work_flow(input_path, output_path, noise_path, **kwgs):
     if kwgs.get('base_path'):
         input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
     if kwgs['message_state'] == 1:
-        print('Input path:', input_path)
-        print('Output path:', output_path)
+        print('\tInput path:', input_path)
+        print('\tOutput path:', output_path)
     if not os.path.isfile(input_path):
-        raise RuntimeError("input_path must be an exist folder or file.")
+        raise RuntimeError("input_path must be an exist file.")
     if os.path.exists(output_path) and not os.path.isfile(output_path):
         raise RuntimeError("output_path must be a file, not a folder.")
-
-    if noise<0 or noise>1:
-        raise ValueError("Noise Probability must be a number between [0,1).")
-
-    x = read_input(input_path)          # do work for one single file `in_file`
-
+    if not os.path.isfile(noise_path):
+        raise RuntimeError("noise_path must by an exist file.")
 
     if kwgs['message_state'] == 1:
         print()
-    write_output
+    arr = read_input(input_path)
+    noise = read_input(noise_path)
+    if len(arr)*8 != len(noise) and len(arr) != len(noise):
+        raise ValueError("NOISE must have the size 8-times longer than INPUT, "
+                         "while NOISE values only 1-bits.")
+    out = generate_error_channel(arr, noise)
+    write_output(output_path, out)
 
 
 def read_input(input_path) -> np.ndarray:
     """
-    从CSV文件中读取符号概率分布。
+    从CSV文件中读取信源数据。
 
     Parameters:
-        input_path (str): 。
+        input_path (str): 文件路径。
 
     Returns:
-        numpy.ndarray: 。
+        numpy.ndarray: 256元信源数据。
     """
+    return np.fromfile(input_path, dtype=np.uint8)
 
 
-def generate_error_channel(arr, p) -> np.ndarray:
+def generate_error_channel(arr, noise) -> np.ndarray:
     """
-    使用np.searchsorted对np.random.uniform的结果做2分类（长度为arr的长度的8倍），使其中1的
-    概率为p（二元对称信道错误传输概率），即0的概率为1-p，随后将二元结果以8个一组，合并为长度同arr的，即N=8次扩展。然后使用
-    异或加载到256元的arr信源。这种方法仅适用于BSC
-    """
+    使用np.searchsorted对np.random.uniform的结果做分类，使其中1的概率为p（二元对称信道错误传输概率），
+    即0的概率为1-p，为了方便使用byteSource产生随机序列，将二元概率空间以8个bit一组，合并为1byte长度，即N=8次扩展。
+    然后使用异或将NOISE加载到256元的信源X上。这种方法仅适用于BSC
 
-    pass
+    Parameters:
+        arr (numpy.ndarray): 信源X。
+        noise (numpy.ndarray): 信道的噪声。
+
+    Returns:
+        numpy.ndarray: 信道输出的信源Y。
+    """
+    if len(arr) * 8 == len(noise):
+        noise = np.packbits(noise)
+    out = np.bitwise_xor(arr, noise)
+    return out
 
 
 def write_output(output_path, sequence) -> None:
@@ -98,6 +100,7 @@ def write_output(output_path, sequence) -> None:
         output_path (str): 输出文件的路径。
         sequence (numpy.ndarray): 生成的符号序列。
     """
+    sequence.tofile(output_path)
 
 
 def quick_test(symbol_prob, msg_len=100000, num_tests=10) -> bool:
@@ -131,6 +134,7 @@ def parse_sys_args() -> dict:
     parser.add_argument('INPUT', nargs='?', help='Input file path')
     parser.add_argument('NOISE', nargs='?', help='Error transmission probability of BSC.')
     parser.add_argument('OUTPUT', nargs='?', help='Output file path')
+    parser.add_argument('--export', nargs='?', help='Except messages output path.')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
     parser.add_argument('-S', action='store_true', help='Weak prompt output')
@@ -139,8 +143,9 @@ def parse_sys_args() -> dict:
     args = parser.parse_args()
     return dict(
         input_path=args.INPUT,
-        noise=args.NOISE,
+        noise_path=args.NOISE,
         output_path=args.OUTPUT,
+        export_path=args.export,
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,
         test_flow=args.test,
