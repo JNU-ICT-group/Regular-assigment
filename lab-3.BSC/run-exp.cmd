@@ -24,7 +24,7 @@ set _ERRORS=0.1,0.5,0.8
 set "_CMD=python byteChannel.py"
 set "_Source=python byteSource.py"
 set "_Generate=python generate.py"
-set "MSG_LENGTH=1024"
+set "MSG_LENGTH=102400"
 
 :: ----- Config : end
 

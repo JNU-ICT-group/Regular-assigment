@@ -23,12 +23,12 @@ __version__ = "20241031.1001"
 def main():
     """Entry point of this program."""
     args = parse_sys_args()
-    workflow(args.X, args.Y, args.OUTPUT, verbose=args.verbose)
+    workflow(args.X, args.Y, args.OUTPUT, verbose=args.verbose, export=args.export)
 
 ###
 # The main work flow
 ###
-def workflow(x_file_name, y_file_name, out_file_name, verbose=False):
+def workflow(x_file_name, y_file_name, out_file_name, verbose=False, export=None):
     """The main workflow."""
 
     # Number of binary bits in one symbol.
@@ -70,6 +70,20 @@ def workflow(x_file_name, y_file_name, out_file_name, verbose=False):
         print('(BSC)p =', p_BSC)
 
     write_results(out_file_name, [x_file_name, y_file_name, H_x, H_y, joint_H_xy, cond_H_xy, cond_H_yx, I_xy, p_BSC])
+    if export:
+        p0 = float(x_file_name[x_file_name.index('p0=')+len('p0='): x_file_name.index('.csv')])
+        p = float(y_file_name[y_file_name.index('p=')+len('p='): y_file_name.index('.DMS')])
+        H_x = calc_H_p([1-p0, p0])
+        p_y = (1-p0)*p + p0*(1-p)
+        H_y = calc_H_p([1-p_y, p_y])
+        joint_p_xy = [(1-p0)*(1-p), (1-p0)*p, p0*(1-p), p0*p]
+        joint_H_xy = calc_H_p(joint_p_xy)
+        # joint_H_xy = H_x + calc_H_p([1-p, p])
+        cond_H_xy = joint_H_xy - H_y
+        cond_H_yx = joint_H_xy - H_x
+        I_xy = H_x + H_y - joint_H_xy
+        p_BSC = p
+        write_results(export, [x_file_name, y_file_name, H_x, H_y, joint_H_xy, cond_H_xy, cond_H_yx, I_xy, p_BSC])
 
     return H_x
 
@@ -101,6 +115,9 @@ def calc_H_p(P):
 def calc_joint_H_xy(joint_p_xy):
     """Calculate joint entropy H(XY)."""
     return np.sum(joint_p_xy * calc_I_p(joint_p_xy))
+
+def calc_cond_H(joint_p_xy, P):
+    return np.sum(joint_p_xy * calc_I_p(P))
 
 def calc_cond_H_xy(joint_p_xy):
     """Calculate conditional entropy H(X|Y)."""
@@ -134,7 +151,7 @@ def calc_cond_H_yx(joint_p_xy):
 
 def count_binary_1(x):
     # Create a Look-Up Table for number of binary '1' in each byte.
-    LUT_num_of_1 = np.array([bin(byte).count("1") for byte in range(256)])
+    LUT_num_of_1 = np.array([byte.bit_count() for byte in range(256)])
     num_of_1 = np.sum(LUT_num_of_1[x])
     return num_of_1
 
@@ -175,6 +192,7 @@ def parse_sys_args():
     parser.add_argument('X', help='path to the channel input file')
     parser.add_argument('Y', help='path to the channel output file')
     parser.add_argument('OUTPUT', help='path to the output file to append results')
+    parser.add_argument('--export', nargs='?', type=str, help='path to the output file to append expect results')
     parser.add_argument('-v', '--verbose', action='store_true', help='display detailed messages')
 
     if len(sys.argv)==1:
