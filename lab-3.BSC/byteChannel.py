@@ -63,22 +63,29 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
 
 def read_input(input_path) -> np.ndarray:
     """
-    从CSV文件中读取符号概率分布。
+    从CSV文件中读取信源数据。
 
     Parameters:
-        input_path (str): 。
+        input_path (str): 文件路径。
 
     Returns:
-        numpy.ndarray: 。
+        numpy.ndarray: 256元信源数据。
     """
     return np.fromfile(input_path, dtype=np.uint8)
 
 
 def generate_error_channel(arr, noise) -> np.ndarray:
     """
-    使用np.searchsorted对np.random.uniform的结果做2分类（长度为arr的长度的8倍），使其中1的
-    概率为p（二元对称信道错误传输概率），即0的概率为1-p，随后将二元结果以8个一组，合并为长度同arr的，即N=8次扩展。然后使用
-    异或加载到256元的arr信源。这种方法仅适用于BSC
+    使用np.searchsorted对np.random.uniform的结果做分类，使其中1的概率为p（二元对称信道错误传输概率），
+    即0的概率为1-p，为了方便使用byteSource产生随机序列，将二元概率空间以8个bit一组，合并为1byte长度，即N=8次扩展。
+    然后使用异或将NOISE加载到256元的信源X上。这种方法仅适用于BSC
+
+    Parameters:
+        arr (numpy.ndarray): 信源X。
+        noise (numpy.ndarray): 信道的噪声。
+
+    Returns:
+        numpy.ndarray: 信道输出的信源Y。
     """
     if len(arr) * 8 == len(noise):
         noise = np.packbits(noise)
@@ -93,8 +100,7 @@ def write_output(output_path, sequence) -> None:
         output_path (str): 输出文件的路径。
         sequence (numpy.ndarray): 生成的符号序列。
     """
-    with open(output_path, 'wb') as f:
-        f.write(bytearray(sequence))
+    sequence.tofile(output_path)
 
 
 def quick_test(symbol_prob, msg_len=100000, num_tests=10) -> bool:
