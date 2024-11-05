@@ -1,3 +1,4 @@
+
 """ Generate a channel with specified error transmission probability of a BSC.
 
 This program is intended for used in course, Principle of Information and Coding Theory.
@@ -15,6 +16,7 @@ from pathlib import Path
 
 # Non-standard library
 import numpy as np
+import uuid
 
 __author__ = "Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn; "
@@ -22,21 +24,6 @@ __version__ = "20241031.1001"
 
 
 def main(input_path, output_path, noise_path, **kwgs):
-    input_paths = path_split(input_path)
-    output_paths = path_split(output_path)
-    noise_paths = path_split(noise_path)
-
-    for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
-        if kwgs['message_state']:
-            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
-        work_flow(input_path, output_path, noise_path, **kwgs)
-
-
-def path_split(path):
-    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
-
-
-def work_flow(input_path, output_path, noise_path, **kwgs):
     if kwgs.get('base_path'):
         input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
@@ -52,6 +39,21 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
 
     if kwgs['message_state'] == 1:
         print()
+    input_paths = path_split(input_path)
+    output_paths = path_split(output_path)
+    noise_paths = path_split(noise_path)
+
+    for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
+        if kwgs['message_state']:
+            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
+        work_flow(input_path, output_path, noise_path)
+
+
+def path_split(path):
+    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
+
+
+def work_flow(input_path, output_path, noise_path):
     arr = read_input(input_path)
     noise = read_input(noise_path)
     if len(arr)*8 != len(noise) and len(arr) != len(noise):
@@ -103,23 +105,133 @@ def write_output(output_path, sequence) -> None:
     sequence.tofile(output_path)
 
 
-def quick_test(symbol_prob, msg_len=100000, num_tests=10) -> bool:
+def quick_test(msg_len=100000) -> bool:
     """
     快速测试生成符号序列的概率分布是否符合给定的概率分布。
 
     Parameters:
-        symbol_prob (numpy.ndarray): 符号的概率分布。
         msg_len (int): 生成的消息长度（符号数量）。
-        num_tests (int): 测试的轮数。
 
     Returns:
         bool: 测试是否通过。
     """
+
+    # 生成特殊情况文件三种如下
+    def generate_all_zeros(length):
+        """
+        生成一个全为0的数组，并保存为二进制文件。
+
+        参数:
+            length (int): 数组的长度。
+
+        返回:
+            str: 保存的二进制文件的完整路径。
+        """
+        data = np.zeros(length, dtype='uint8')
+        return save_to_file(data)
+
+    def generate_half_zeros_half_ones(length):
+        """
+        生成一个一半为0一半为1的数组，并保存为二进制文件。
+
+        参数:
+            length (int): 数组的长度。
+
+        返回:
+            str: 保存的二进制文件的完整路径。
+        """
+        data = np.zeros(length, dtype='uint8')
+        mid_point = length // 2
+        data[mid_point:] = 1
+        return save_to_file(data)
+
+    def generate_alternating_zeros_ones(length):
+        """
+        生成一个交替为0和1的数组，并保存为二进制文件。
+
+        参数:
+            length (int): 数组的长度。
+
+        返回:
+            str: 保存的二进制文件的完整路径。
+        """
+        data = np.arange(length, dtype='uint8') % 2
+        return save_to_file(data)
+
+    def save_to_file(data):
+        """
+        将数组数据保存为一个随机生成的二进制文件，并返回文件路径。
+
+        参数:
+            data (numpy.ndarray): 要保存的数组数据。
+
+        返回:
+            str: 保存的二进制文件的完整路径。
+        """
+        # 使用 uuid 生成一个唯一的文件名
+        random_filename = f"{uuid.uuid4()}.bin"
+        # 获取当前工作目录并构建完整路径
+        file_path = os.path.join(os.getcwd(), random_filename)
+        # 将数组数据保存为二进制文件
+        data.tofile(file_path)
+        # 返回文件路径
+        return file_path
+
+    def delete_temp_file(file_path):
+        """
+        删除临时文件
+        :param file_path: 临时文件路径
+        """
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        else:
+            print(f"文件不存在: {file_path}")
+
+    length = msg_len
+    # 文件名称列表
+    file_names = ["全0文件", "半0半1文件", "01交替文件"]
+
+    files = [
+        generate_all_zeros(length),
+        generate_half_zeros_half_ones(length),
+        generate_alternating_zeros_ones(length)
+    ]
+
+    for i, file1 in enumerate(files):
+        for j, file2 in enumerate(files):
+            print(f"Processing files:H(X) {file_names[i]} and H(N){file_names[j]}")
+            output_file = f'outfile{i}{j}.dat'
+            work_flow(files[i], output_file, files[j])
+            input_data = read_input(file1)
+            noise_data = read_input(file2)
+            output_data = read_input(output_file)
+            # 逐位比较并统计不同位的数量
+            test_differences = np.bitwise_xor(input_data, output_data)
+            real_differences = noise_data
+            test_error_count = np.sum(test_differences != 0)
+            real_error_count = np.sum(real_differences != 0)
+
+            # 计算错误率
+            total_bits = length  # 每个 uint8 有 8 位
+            test_error_rate = test_error_count / total_bits
+            real_error_rate = real_error_count / total_bits
+            if test_error_rate == real_error_rate:
+                print("错误率是：", test_error_rate, "\n测试通过")
+            else:
+                return False
+
+    for file in files:
+        delete_temp_file(file)
+        # 删除所有输出文件
+    for i in range(len(files)):
+        for j in range(len(files)):
+            output_file = f'outfile{i}{j}.dat'
+            delete_temp_file(output_file)
     return True
 
 
 def test_flow() -> None:
-    all_tests_passed = True
+    all_tests_passed = quick_test()
 
     # 检查是否所有测试都通过
     if all_tests_passed:
