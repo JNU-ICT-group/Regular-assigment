@@ -81,5 +81,3 @@ For example:
   - `results.csv`
   
     Results from unit test
-
-
