@@ -1,4 +1,3 @@
-
 """ Generate a channel with specified error transmission probability of a BSC.
 
 This program is intended for used in course, Principle of Information and Coding Theory.
@@ -16,7 +15,6 @@ from pathlib import Path
 
 # Non-standard library
 import numpy as np
-import uuid
 
 __author__ = "Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn; "
@@ -54,21 +52,6 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
 
     if kwgs.get('message_state') == 1:
         print()
-    input_paths = path_split(input_path)
-    output_paths = path_split(output_path)
-    noise_paths = path_split(noise_path)
-
-    for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
-        if kwgs['message_state']:
-            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
-        work_flow(input_path, output_path, noise_path)
-
-
-def path_split(path):
-    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
-
-
-def work_flow(input_path, output_path, noise_path):
     arr = read_input(input_path)
     noise = read_input(noise_path)
     if len(arr)*8 != len(noise) and len(arr) != len(noise):
