@@ -80,7 +80,24 @@
     系统联调     :sys_joint, after module_impl sys_test_impl, 2d
     系统封装     :sys_pack, after sys_test_impl sys_joint, 1d
 </div><h2 id="系统逻辑">系统逻辑 </h2>
-<h3 id="入口">入口 </h3>
+<h3 id="系统流程">系统流程 </h3>
+<div class="mermaid">flowchart TD
+
+A(入口
+run-exp) --&gt; B[generate
+                  辅助文件]
+B --&gt; G[byteSource
+生成随机序列]
+G --&gt; H[byteChannel
+仿真对称信道]
+H --&gt; F[生成数据]
+
+style A stroke:#000,fill:none
+style B stroke:#000,fill:none
+style G stroke:#000,fill:none
+style H stroke:#000,fill:none
+style F stroke:#000,fill:none
+</div><h3 id="bytechannel">byteChannel </h3>
 <div class="mermaid">flowchart TD
 
 A(入口) --&gt; B[解析命令行]
@@ -109,12 +126,35 @@ style B stroke:#000,fill:none
 style C stroke:#000,fill:none
 style D stroke:#000,fill:none
 style F stroke:#000,fill:none
-</div><h3 id="单元测试">单元测试 </h3>
+</div><h3 id="bsc仿真单元测试">BSC仿真单元测试 </h3>
 <div class="mermaid">flowchart TD
 
 A(开始) --&gt; B[生成特定信号和噪声序列]
 B --&gt; C[工作流]
-C --&gt; D[/验证信息熵/]
+C --&gt; D{理论对比}
+D --&gt;|代码| E[export
+生成csv]
+D --&gt;|公式| F[Excel
+表格]
+E --&gt; G[/对比结果误差/]
+F --&gt; G
+G --&gt; H[结束]
+
+style A stroke:#000,fill:none
+style B stroke:#000,fill:none
+style C stroke:#000,fill:none
+style D stroke:#000,fill:none
+style F stroke:#000,fill:none
+style G stroke:#000,fill:none
+style H stroke:#000,fill:none
+style E stroke:#000,fill:none
+</div><h3 id="计算熵指标单元测试">计算熵指标单元测试 </h3>
+<div class="mermaid">flowchart TD
+
+A(入口
+unit-test) --&gt; B[读取文件夹实例文件]
+B --&gt; C[实际指标]
+C --&gt; D[/验证错误传递概率/]
 D --&gt; F[结束]
 
 style A stroke:#000,fill:none
@@ -125,50 +165,151 @@ style F stroke:#000,fill:none
 
 </div><h2 id="api定义">API定义 </h2>
 <h3 id="函数">函数 </h3>
+<h3 id="模块功能简介">模块功能简介 </h3>
 <ul>
 <li>
 <p>入口<br>
-<code>main()</code></p>
+<strong><code>main(input_path: str, output_path: str, noise_path: str, **kwgs)</code></strong><br>
+主入口函数，解析输入、输出和噪声文件路径并调用工作流处理。</p>
+<ul>
+<li><strong><code>input_path</code></strong>: 输入文件路径（<code>str</code>）</li>
+<li><strong><code>output_path</code></strong>: 输出文件路径（<code>str</code>）</li>
+<li><strong><code>noise_path</code></strong>: 噪声文件路径（<code>str</code>）</li>
+<li><strong><code>kwgs</code></strong>: 其他命令行参数，如 <code>message_state</code> 和 <code>base_path</code>。</li>
+</ul>
 </li>
 <li>
 <p>解析命令行参数<br>
-<code>(input_file_name, noise_file_name, output_file_name, do_test) = parse_sys_args()</code></p>
+<strong><code>parse_sys_args()</code></strong><br>
+使用 <code>argparse</code> 模块解析命令行参数，包括输入文件、噪声文件、输出文件及其他参数，如目录路径和测试标志等。</p>
+<ul>
+<li><strong>返回值</strong>: 包含解析后的命令行参数的字典。</li>
+</ul>
+</li>
+<li>
+<p>处理路径字符串<br>
+<strong><code>path_split(path: str)</code></strong><br>
+处理传入的路径字符串，支持多路径输入，通过分号（<code>;</code>）分割各个路径。</p>
+<ul>
+<li><strong><code>path</code></strong>: 需要处理的路径字符串（<code>str</code>）</li>
+<li><strong>返回值</strong>: 一个包含路径列表的可迭代对象。</li>
+</ul>
 </li>
 <li>
 <p>工作流<br>
-<code>data = workflow(input_file_name, noise_file_name, output_file_name)</code></p>
+<strong><code>work_flow(input_path: str, output_path: str, noise_path: str, **kwgs)</code></strong><br>
+核心处理流程，主要包括读取输入文件、仿真BSC信道传输、写入输出文件等。</p>
+<ul>
+<li><strong><code>input_path</code></strong>: 输入文件路径（<code>str</code>）</li>
+<li><strong><code>output_path</code></strong>: 输出文件路径（<code>str</code>）</li>
+<li><strong><code>noise_path</code></strong>: 噪声文件路径（<code>str</code>）</li>
+<li><strong><code>kwgs</code></strong>: 其他命令行参数，如 <code>base_path</code> 和 <code>message_state</code>。</li>
+</ul>
 </li>
 <li>
 <p>读取输入文件<br>
-<code>data = read_input(file_name)</code></p>
+<strong><code>read_input(input_path: str) -&gt; np.ndarray</code></strong><br>
+读取文件内容并以 NumPy 数组形式返回，用于读取信源数据。</p>
+<ul>
+<li><strong><code>input_path</code></strong>: 文件路径（<code>str</code>）</li>
+<li><strong>返回值</strong>: 一个 NumPy 数组，包含读取的信源数据。</li>
+</ul>
 </li>
 <li>
 <p>仿真BSC<br>
-<code>output_data = byte_channel(input_data, noise_data)</code></p>
+<strong><code>generate_error_channel(arr: np.ndarray, noise: np.ndarray) -&gt; np.ndarray</code></strong><br>
+使用给定的噪声序列对输入数据进行比特异或操作，模拟BSC错误传输。</p>
+<ul>
+<li><strong><code>arr</code></strong>: 信源数据（<code>np.ndarray</code>）</li>
+<li><strong><code>noise</code></strong>: 噪声数据（<code>np.ndarray</code>）</li>
+<li><strong>返回值</strong>: 通过 BSC 仿真后的数据（<code>np.ndarray</code>）。</li>
+</ul>
 </li>
 <li>
 <p>写入输出文件<br>
-<code>write_output(output_data, output_file_name)</code></p>
+<strong><code>write_output(output_path: str, sequence: np.ndarray) -&gt; None</code></strong><br>
+将生成的符号序列写入输出文件。</p>
+<ul>
+<li><strong><code>output_path</code></strong>: 输出文件路径（<code>str</code>）</li>
+<li><strong><code>sequence</code></strong>: 需要写入的符号序列（<code>np.ndarray</code>）</li>
+</ul>
+</li>
+<li>
+<p>快速测试<br>
+<strong><code>quick_test(input_path: str, output_path: str, noise_path: str) -&gt; bool</code></strong><br>
+快速测试生成符号序列的错误传输概率是否符合预期。</p>
+<ul>
+<li><strong><code>input_path</code></strong>: 输入文件路径（<code>str</code>）</li>
+<li><strong><code>output_path</code></strong>: 输出文件路径（<code>str</code>）</li>
+<li><strong><code>noise_path</code></strong>: 噪声文件路径（<code>str</code>）</li>
+<li><strong>返回值</strong>: <code>True</code> 如果测试通过，<code>False</code> 如果不通过。</li>
+</ul>
 </li>
 <li>
 <p>单元测试<br>
-<code>test_workflow()</code></p>
+<strong><code>test_flow(msg_len: int = 100000) -&gt; None</code></strong><br>
+自动化单元测试流程，生成各种特殊情况的输入文件并进行多次测试。</p>
+<ul>
+<li><strong><code>msg_len</code></strong>: 生成的消息长度（符号数量，<code>int</code>）。默认值为 <code>100000</code>。</li>
+</ul>
+</li>
+<li>
+<p>生成测试数据<br>
+<strong><code>generate_all_zeros(length: int) -&gt; str</code></strong><br>
+生成一个全为0的数组，并保存为二进制文件。</p>
+<ul>
+<li><strong><code>length</code></strong>: 生成数组的长度（<code>int</code>）</li>
+<li><strong>返回值</strong>: 生成并保存的二进制文件的完整路径（<code>str</code>）</li>
+</ul>
+<p><strong><code>generate_half_zeros_half_ones(length: int) -&gt; str</code></strong><br>
+生成一个一半为0一半为1的数组，并保存为二进制文件。</p>
+<ul>
+<li><strong><code>length</code></strong>: 生成数组的长度（<code>int</code>）</li>
+<li><strong>返回值</strong>: 生成并保存的二进制文件的完整路径（<code>str</code>）</li>
+</ul>
+<p><strong><code>generate_alternating_zeros_ones(length: int) -&gt; str</code></strong><br>
+生成一个交替为0和1的数组，并保存为二进制文件。</p>
+<ul>
+<li><strong><code>length</code></strong>: 生成数组的长度（<code>int</code>）</li>
+<li><strong>返回值</strong>: 生成并保存的二进制文件的完整路径（<code>str</code>）</li>
+</ul>
+</li>
+<li>
+<p>删除临时文件<br>
+<strong><code>delete_temp_file(file_path: str) -&gt; None</code></strong><br>
+删除临时文件。</p>
+<ul>
+<li><strong><code>file_path</code></strong>: 临时文件路径（<code>str</code>）</li>
+<li><strong>返回值</strong>: 无返回值。</li>
+</ul>
 </li>
 </ul>
 <h3 id="变量">变量 </h3>
 <ul>
-<li><code>input_file_name</code>: <code>str</code><br>
-输入文件的文件名</li>
-<li><code>noise_file_name</code>: <code>str</code><br>
-噪声文件的文件名</li>
-<li><code>output_file_name</code>: <code>str</code><br>
-输出文件的文件名</li>
-<li><code>do_test</code>: <code>boolean</code><br>
-True: 进行单元测试; False: 不进行单元测试</li>
-<li><code>output_data</code>:  <code>bytearray</code><br>
-二元对称信道传输的数据内容</li>
-<li><code>data</code>: <code>numpy.array</code> of <code>uint8</code>, one dimentional<br>
-读取的信号序列和噪声二元序列</li>
+<li>
+<p><code>input_file_name</code>: <code>str</code><br>
+输入文件的文件名</p>
+</li>
+<li>
+<p><code>noise_file_name</code>: <code>str</code><br>
+噪声文件的文件名</p>
+</li>
+<li>
+<p><code>output_file_name</code>: <code>str</code><br>
+输出文件的文件名</p>
+</li>
+<li>
+<p><code>do_test</code>: <code>boolean</code><br>
+True: 进行单元测试; False: 不进行单元测试</p>
+</li>
+<li>
+<p><code>output_data</code>: <code>bytearray</code><br>
+二元对称信道传输的数据内容</p>
+</li>
+<li>
+<p><code>data</code>: <code>numpy.array</code> of <code>uint8</code>, one dimensional<br>
+读取的信号序列和噪声二元序列</p>
+</li>
 </ul>
 <h2 id="分工">分工 </h2>
 <ul>

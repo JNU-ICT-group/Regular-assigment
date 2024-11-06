@@ -246,7 +246,6 @@ def parse_sys_args() -> dict:
     parser.add_argument('INPUT', nargs='?', help='Input file path')
     parser.add_argument('NOISE', nargs='?', help='Error transmission probability of BSC.')
     parser.add_argument('OUTPUT', nargs='?', help='Output file path')
-    parser.add_argument('--export', nargs='?', help='Except messages output path.')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
     parser.add_argument('-S', action='store_true', help='Weak prompt output')
@@ -257,7 +256,6 @@ def parse_sys_args() -> dict:
         input_path=args.INPUT,
         noise_path=args.NOISE,
         output_path=args.OUTPUT,
-        export_path=args.export,
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,
         test_flow=args.test,
