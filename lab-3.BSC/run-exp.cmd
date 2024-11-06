@@ -25,7 +25,7 @@ set "_CMD=python byteChannel.py"
 set "_Source=python byteSource.py"
 set "_Generate=python generate.py"
 set "MSG_LENGTH=102400"
-
+set "_NOT_VERBOSE=1"
 :: ----- Config : end
 
 :: Get this script's directory.
@@ -99,5 +99,6 @@ echo:
 :: Return to the previous directory.
 popd
 
+call unit-test.cmd
 :: Exit.
 endlocal & exit /b
