@@ -1,0 +1,5 @@
+/__pycache__/
+DMS.*.dat
+DMS.*.csv
+HC.*.dat
+*.tmp
