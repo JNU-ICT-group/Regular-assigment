@@ -27,7 +27,7 @@ import io
 # Non-standard library
 import numpy as np
 import dahuffman
-import dahuffman_head
+import dahuffman
 from dahuffman_no_EOF import HuffmanCodec
 
 __author__ = "Guo, Jiangling"
