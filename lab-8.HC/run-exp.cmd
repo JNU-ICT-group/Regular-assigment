@@ -11,12 +11,12 @@ setlocal enabledelayedexpansion
 :: ----- Config : begin
 
 :: Directory for data
-set "_DATA_DIR=test-data"
+set "_DATA_DIR=unit-data"
 
 :: Directory for Outputs
-set "_OUT_DIR=test-data"
+set "_OUT_DIR=unit-data"
 
-:: Error transmission probabilities of BSCs
+:: Probabilities of DMSs
 set _CREATE=0.2,0.5,0.7
 set _CREATE_T=
 

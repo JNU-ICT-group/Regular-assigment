@@ -112,7 +112,7 @@ def calc_entropy(p: np.ndarray) -> float:
 
 def compute_info(arr, x_size) -> Tuple[np.ndarray, float]:
     if x_size == 0:
-        return 0.0  # 避免空文件导致的问题
+        return np.uint8([]), 0  # 避免空文件导致的问题
 
     # 计算每个字节的近似概率
     probability = calc_probability(arr[:x_size])

@@ -1,6 +1,6 @@
-import sys, array
+import sys
 
-bit_counts = array.array('B', map(int.bit_count, range(256)))
+bit_counts = bytearray(map(int.bit_count, range(256)))
 
 def main(ones, output_paths):
     for p, output_path in zip(ones, output_paths):
@@ -12,6 +12,6 @@ def main(ones, output_paths):
 
 
 if __name__ == "__main__":
-    ones = tuple(map(float, sys.argv[-2].split(',')))
-    output_paths = tuple(filter(None, map(str.strip, sys.argv[-1].split(';'))))
+    ones = map(float, sys.argv[-2].split(','))
+    output_paths = filter(None, map(str.strip, sys.argv[-1].split(';')))
     main(ones, output_paths)
