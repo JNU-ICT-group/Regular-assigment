@@ -63,7 +63,7 @@ for %%j in (%_CREATE%) do (
 )
 
 echo:
-@REM echo Using other PMF
+@REM echo Using unmapped PMF
 for %%j in (%_CREATE%) do (
     call %_CMD% encode "%_DATA_DIR%\DMS.p0=!_CREATE_T!.csv" "%_OUT_DIR%\DMS.p0=%%j.dat" "%_OUT_DIR%\HC.en.PMF=!_CREATE_T!.p0=%%j.dat"
     set _CREATE_T=%%j
