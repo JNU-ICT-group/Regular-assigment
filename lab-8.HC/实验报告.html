@@ -1,0 +1,540 @@
+<!DOCTYPE html><html><head>
+      <title>实验报告</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\lenovo\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.15\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      <script type="text/javascript" src="file:///c:\Users\lenovo\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.15\crossnote\dependencies\mermaid\mermaid.min.js" charset="UTF-8"></script>
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="无失真信源编码实验报告">无失真信源编码实验报告 </h1>
+<h2 id="一-实验基本信息">一、实验基本信息 </h2>
+<ul>
+<li><strong>实验名称</strong>: 8.1 无失真信源编码的实现</li>
+<li><strong>实验目的</strong>:
+<ol>
+<li>实现基于霍夫曼编码的无失真信源编码程序。</li>
+<li>比较不同概率分布下的信源编码效果。</li>
+<li>计算并对比理论上无失真信源编码的压缩极限与实际编码结果。</li>
+</ol>
+</li>
+<li><strong>实验软件</strong>:
+<ul>
+<li>编程语言: Python</li>
+<li>使用的库: numpy、argparse 等</li>
+</ul>
+</li>
+<li><strong>实验环境</strong>:
+<ul>
+<li>操作系统: Windows 64位</li>
+<li>Python 版本: 3.x</li>
+<li>必要工具: 7z 压缩工具</li>
+</ul>
+</li>
+<li><strong>实验成员</strong>:
+<ul>
+<li>陈万弘</li>
+<li>张朋洋</li>
+<li>陈金</li>
+<li>许宏亮</li>
+<li>张振兴</li>
+<li>曾博升</li>
+</ul>
+</li>
+</ul>
+<h2 id="二-实验原理">二、实验原理 </h2>
+<h3 id="1-无失真信源编码简介">1. 无失真信源编码简介 </h3>
+<p>无失真信源编码（Lossless Source Coding）是一种数据压缩方法，在压缩过程中不会丢失任何信息，解码后的数据与原数据完全一致。霍夫曼编码是一种常用的无失真编码方法，它基于符号的频率构建编码方案，通过为频率较高的符号分配短的编码，而为频率较低的符号分配长的编码，从而实现数据压缩。</p>
+<h3 id="2-霍夫曼编码">2. 霍夫曼编码 </h3>
+<p>霍夫曼编码是一种最优前缀编码算法，基于符号频率的概率分布来生成最小平均码长的编码表。该编码方式具有以下特点：</p>
+<ul>
+<li><strong>前缀性质</strong>：任何一个符号的编码都不是另一个符号编码的前缀。</li>
+<li><strong>最优性</strong>：根据符号的频率分布生成的编码，使得数据的总码长最短。</li>
+</ul>
+<h4 id="霍夫曼编码的构建过程">霍夫曼编码的构建过程 </h4>
+<ol>
+<li>
+<p><strong>构建最小堆</strong>:</p>
+<ul>
+<li>将每个符号和其频率作为节点，插入最小堆中。每个节点包含符号和其频率。</li>
+</ul>
+</li>
+<li>
+<p><strong>合并最小频率的节点</strong>:</p>
+<ul>
+<li>从最小堆中弹出两个频率最小的节点，并将它们合并成一个新的节点。新节点的频率为两个子节点的频率之和，且新节点的左子树为一个符号，右子树为另一个符号。</li>
+</ul>
+</li>
+<li>
+<p><strong>重复合并</strong>:</p>
+<ul>
+<li>重复步骤 2，直到堆中只剩一个节点，这个节点代表着整个霍夫曼树。</li>
+</ul>
+</li>
+<li>
+<p><strong>生成编码表</strong>:</p>
+<ul>
+<li>从霍夫曼树的根节点开始，向下遍历树的每条路径（左子树为 '0'，右子树为 '1'），为每个符号分配唯一的二进制编码。</li>
+</ul>
+</li>
+</ol>
+<h4 id="解码过程">解码过程 </h4>
+<ul>
+<li>在解码时，使用已构建好的霍夫曼树，根据编码的每一位决定走树的左子树或右子树，直到遇到叶子节点，返回对应的符号。</li>
+</ul>
+<h3 id="3-实验实现">3. 实验实现 </h3>
+<h4 id="encode-命令"><code>encode</code> 命令 </h4>
+<ul>
+<li><strong>功能</strong>: 对给定的输入信源文件进行编码，生成压缩后的编码文件。</li>
+<li><strong>输入</strong>:
+<ul>
+<li><code>PMF</code>: 概率质量函数文件，指定符号的概率分布。</li>
+<li><code>INPUT</code>: 要编码的源数据文件。</li>
+</ul>
+</li>
+<li><strong>输出</strong>:
+<ul>
+<li><code>OUTPUT</code>: 编码后的输出文件，包含编码信息和数据。</li>
+</ul>
+</li>
+</ul>
+<h4 id="decode-命令"><code>decode</code> 命令 </h4>
+<ul>
+<li><strong>功能</strong>: 对给定的编码文件进行解码，恢复原始的源数据。</li>
+<li><strong>输入</strong>:
+<ul>
+<li><code>INPUT</code>: 编码后的文件。</li>
+</ul>
+</li>
+<li><strong>输出</strong>:
+<ul>
+<li><code>OUTPUT</code>: 解码后的文件，理论上应与 <code>encode</code> 输入的文件一致。</li>
+</ul>
+</li>
+</ul>
+<h3 id="31-编码过程">3.1 编码过程 </h3>
+<p>编码过程通过 <code>encode</code> 命令实现，其主要流程如下：</p>
+<ol>
+<li>
+<p><strong>读取源数据</strong>：</p>
+<ul>
+<li>从输入文件中读取源数据，数据格式为 <code>uint8</code>，即每个符号占 1 字节。</li>
+</ul>
+</li>
+<li>
+<p><strong>读取概率质量函数（PMF）</strong>：</p>
+<ul>
+<li>读取指定的概率质量函数文件，构建符号的概率分布字典。</li>
+</ul>
+</li>
+<li>
+<p><strong>构建霍夫曼编码器</strong>：</p>
+<ul>
+<li>使用概率分布构建霍夫曼编码器。霍夫曼编码通过最优的编码方式对源数据进行压缩，生成对应的编码。</li>
+</ul>
+</li>
+<li>
+<p><strong>生成编码文件</strong>：</p>
+<ul>
+<li>获取编码器的码本，构建包含编码信息的文件头。文件头包括符号的数量、源数据的长度以及每个符号的编码信息。</li>
+<li>将编码后的数据和文件头一起写入输出文件。</li>
+</ul>
+</li>
+<li>
+<p><strong>输出</strong>：</p>
+<ul>
+<li>输出编码后的文件，包含了源数据的压缩版本以及相关的编码信息，方便解码过程使用。</li>
+</ul>
+</li>
+</ol>
+<h3 id="32-解码过程">3.2 解码过程 </h3>
+<p>解码过程通过 <code>decode</code> 命令实现，主要包括以下步骤：</p>
+<ol>
+<li>
+<p><strong>读取编码文件</strong>：</p>
+<ul>
+<li>打开编码后的文件，首先读取文件头部信息，获取符号计数、源数据长度和每个符号的编码信息。</li>
+</ul>
+</li>
+<li>
+<p><strong>构建解码器</strong>：</p>
+<ul>
+<li>根据文件头中的编码信息，构建霍夫曼解码器，解码器会使用该信息来正确解码数据。</li>
+</ul>
+</li>
+<li>
+<p><strong>解码数据</strong>：</p>
+<ul>
+<li>使用霍夫曼解码器对编码后的数据进行解码，恢复源数据。</li>
+</ul>
+</li>
+<li>
+<p><strong>输出解码后的文件</strong>：</p>
+<ul>
+<li>将解码后的数据写入输出文件，理论上应与编码前的源数据一致。</li>
+</ul>
+</li>
+</ol>
+<h3 id="33-文件比较">3.3 文件比较 </h3>
+<p>为验证编码和解码过程的正确性，提供了 <code>compare</code> 命令来比较源文件和解码后的文件是否一致：</p>
+<ol>
+<li>
+<p><strong>读取两个文件的数据</strong>：</p>
+<ul>
+<li>读取源文件和解码文件的数据，按字节进行比较。</li>
+</ul>
+</li>
+<li>
+<p><strong>比较文件大小</strong>：</p>
+<ul>
+<li>如果源文件和解码文件大小不同，输出警告，并比较前几个字节。</li>
+</ul>
+</li>
+<li>
+<p><strong>统计差异</strong>：</p>
+<ul>
+<li>比较源文件和解码文件每个字节的差异，统计不同字节的数量。</li>
+</ul>
+</li>
+<li>
+<p><strong>输出结果</strong>：</p>
+<ul>
+<li>输出文件中的差异字节总数，检查是否存在编码或解码过程中的误差。</li>
+</ul>
+</li>
+</ol>
+<h3 id="34-流程逻辑">3.4 流程逻辑 </h3>
+<p>整个程序的流程可以分为以下几个关键步骤：</p>
+<ol>
+<li>
+<p><strong>命令行解析</strong>：</p>
+<ul>
+<li>使用 <code>argparse</code> 解析输入的命令和参数，支持 <code>encode</code>、<code>decode</code> 和 <code>compare</code> 子命令。</li>
+</ul>
+</li>
+<li>
+<p><strong>编码过程</strong>：</p>
+<ul>
+<li>对于 <code>encode</code> 命令，程序读取源数据和概率质量函数文件，构建霍夫曼编码器，生成压缩后的编码文件，并计算压缩比。</li>
+</ul>
+</li>
+<li>
+<p><strong>解码过程</strong>：</p>
+<ul>
+<li>对于 <code>decode</code> 命令，程序读取编码文件，解析文件头部信息，使用霍夫曼解码器解码数据，恢复源数据。</li>
+</ul>
+</li>
+<li>
+<p><strong>文件比较</strong>：</p>
+<ul>
+<li>对于 <code>compare</code> 命令，程序比较源文件和解码文件，统计差异字节，确保编码和解码的正确性。</li>
+</ul>
+</li>
+<li>
+<p><strong>测试</strong>：</p>
+<ul>
+<li>提供了 <code>test</code> 子命令用于进行单元测试，验证程序的各项功能是否正常工作。</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-理论分析">4. 理论分析 </h3>
+<h4 id="41-无失真信源编码的理论基础">4.1 无失真信源编码的理论基础 </h4>
+<p>无失真信源编码的核心依据是 <strong>信源编码定理</strong>，该定理指出：</p>
+<blockquote>
+<p>一个具有熵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span> 的离散无记忆信源，在无失真的情况下，可以将每个符号压缩到平均长度为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span> 比特，而不丢失信息。其压缩后的码字长度的期望值不能低于熵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span>。</p>
+</blockquote>
+<ul>
+<li><strong>下限</strong>：码字的平均长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 满足<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo>≥</mo><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L \geq H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span></span></li>
+<li><strong>上限</strong>：存在一种编码方式，使得平均码长接近 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span>，即<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo>→</mo><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mspace width="1em"></mspace><mtext>当&nbsp;</mtext><mi>N</mi><mo>→</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">L \to H(X) \quad \text{当 } N \to \infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord cjk_fallback">当</span><span class="mord">&nbsp;</span></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord">∞</span></span></span></span></span><br>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 是消息的长度。</li>
+</ul>
+<h4 id="42-信息熵与最小文件尺寸">4.2 信息熵与最小文件尺寸 </h4>
+<p>信息熵 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span> 衡量了信源的不确定性，越大表示信息越难以压缩。它的数学表达式为：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo><msub><mrow><mi>log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X) = -\sum_{i=1}^n P(x_i) \log_2 P(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span><br>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 是信源符号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 出现的概率，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 是符号集合的大小。</p>
+<p>根据信源编码定理，压缩后的最小文件尺寸为：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>最小文件尺寸</mtext><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">\text{最小文件尺寸} = H(X) \cdot N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">最小文件尺寸</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span></span><br>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 为文件的符号总数。</p>
+<h4 id="43-最高压缩比">4.3 最高压缩比 </h4>
+<p>最高压缩比定义为原始文件大小与压缩后文件大小的比值：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>原始文件大小</mtext><mtext>压缩后文件大小</mtext></mfrac><mo>=</mo><mfrac><mrow><mi>N</mi><mo>⋅</mo><mn>1</mn></mrow><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>N</mi></mrow></mfrac><mo>=</mo><mfrac><mn>1</mn><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{\text{原始文件大小}}{\text{压缩后文件大小}} = \frac{N \cdot 1}{H(X) \cdot N} = \frac{1}{H(X)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">压缩后文件大小</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">原始文件大小</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2963em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2574em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span><br>
+对于二元信源，原始文件每个符号占用 8 bit，因此原始文件大小为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn><mo>⋅</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">8 \cdot N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> bit。</p>
+<h4 id="44-霍夫曼编码的理论极限">4.4 霍夫曼编码的理论极限 </h4>
+<p>霍夫曼编码的理论极限也可以通过香农熵（Shannon Entropy）来描述。香农熵是信源信息量的度量，其公式为：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>p</mi><mi>i</mi></msub><msub><mrow><mi>log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">H(X) = - \sum_{i=1}^{n} p_i \log_2 p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><br>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">p_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 是符号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 出现的概率。</p>
+<p>霍夫曼编码的最优编码长度接近于香农熵给出的极限。因此，编码后的文件大小应当为：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>L</mi><mo>=</mo><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">L = H(X) \cdot N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span></span><br>
+其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 是信源符号的总数。</p>
+<h4 id="45-压缩比">4.5 压缩比 </h4>
+<p>压缩比是衡量编码效果的标准，它定义为源数据的大小与编码数据的大小之比：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Compression&nbsp;Ratio</mtext><mo>=</mo><mfrac><mtext>Original&nbsp;Size</mtext><mtext>Compressed&nbsp;Size</mtext></mfrac></mrow><annotation encoding="application/x-tex">\text{Compression Ratio} = \frac{\text{Original Size}}{\text{Compressed Size}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Compression&nbsp;Ratio</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2519em;vertical-align:-0.8804em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Compressed&nbsp;Size</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">Original&nbsp;Size</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span><br>
+根据理论推导，霍夫曼编码的压缩比应接近 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{H(X)}{L(X)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.53em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">L</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，即原始数据的香农熵与编码后的文件长度之间的比例。</p>
+<h2 id="三-实验过程">三、实验过程 </h2>
+<ol>
+<li><strong>运行批处理文件</strong>:<br>
+点击运行批处理文件<code>run-exp.cmd</code>后将会执行以下流程</li>
+</ol>
+<div class="mermaid">graph TD
+    A[开始] --&gt; B[创建目录]
+    B --&gt; C[生成PMF和源数据]
+    C --&gt; D[编码源数据]
+    D --&gt; E[解码编码数据]
+    E --&gt; F[比较文件]
+    F --&gt; G[结束]
+
+    style A fill:#fff,stroke:#000,color:#000
+    style B fill:#fff,stroke:#000,color:#000
+    style C fill:#fff,stroke:#000,color:#000
+    style D fill:#fff,stroke:#000,color:#000
+    style E fill:#fff,stroke:#000,color:#000
+    style F fill:#fff,stroke:#000,color:#000
+    style G fill:#fff,stroke:#000,color:#000
+</div><ol start="2">
+<li><strong>7z压缩</strong>:<br>
+使用7z压缩工具将三个消息文件进行压缩，保存在<code>unit-data</code>文件夹中，方便分析比较。</li>
+</ol>
+<h2 id="四-实验结果及结论">四、实验结果及结论 </h2>
+<h3 id="1-编码结果">1. 编码结果 </h3>
+<ul>
+<li><strong>DMS.p0=0.2.dat</strong> 文件的源数据长度为 102400 B，经过编码后，编码数据长度为 74982 B，压缩比为 1.3657。</li>
+<li><strong>DMS.p0=0.5.dat</strong> 文件的源数据长度为 102400 B，编码后数据长度与源数据相同，均为 102400 B，压缩比为 1.0000（即没有压缩，数据未变化）。</li>
+<li><strong>DMS.p0=0.7.dat</strong> 文件的源数据长度为 102400 B，编码后数据长度为 90662 B，压缩比为 1.1295。</li>
+</ul>
+<h3 id="2-解码结果">2. 解码结果 </h3>
+<p>所有解码操作都成功完成，且解码后的数据长度与源数据相同：</p>
+<ul>
+<li><strong>HC.en.p0=0.2.dat</strong> 解码后数据长度为 102400 B。</li>
+<li><strong>HC.en.p0=0.5.dat</strong> 解码后数据长度为 102400 B。</li>
+<li><strong>HC.en.p0=0.7.dat</strong> 解码后数据长度为 102400 B。</li>
+</ul>
+<p>这表明解码过程恢复了原始数据。</p>
+<h3 id="3-不同pmf的编码结果">3. 不同PMF的编码结果 </h3>
+<p>在使用不同的PMF（概率质量函数）时，编码结果的长度发生了变化：</p>
+<ul>
+<li><strong>DMS.p0=0.2.dat</strong> 使用 <code>DMS.p0=0.7.csv</code> 进行编码时，编码后的文件长度为 151361 B，压缩比为 0.6765。这表明使用 <code>DMS.p0=0.7.csv</code> 作为PMF时，编码效果不佳，导致数据文件比源文件更大。</li>
+</ul>
+<h3 id="4-文件比较结果">4. 文件比较结果 </h3>
+<p>对比源文件和解码后的文件，输出显示文件一致：</p>
+<ul>
+<li><strong>DMS.p0=0.2.dat</strong> 和解码后的文件 "HC.de.PMF=0.7.p0=0.2.dat" 比较，0 字节差异。</li>
+<li><strong>DMS.p0=0.5.dat</strong> 和解码后的文件 "HC.de.PMF=0.2.p0=0.5.dat" 比较，0 字节差异。</li>
+<li><strong>DMS.p0=0.7.dat</strong> 和解码后的文件 "HC.de.PMF=0.5.p0=0.7.dat" 比较，0 字节差异。</li>
+</ul>
+<p>这些结果表明，解码操作恢复了原始数据。</p>
+<h3 id="实验结论">实验结论： </h3>
+<ul>
+<li><strong>编码效果</strong>: 当PMF与源数据的分布较为匹配时，能够有效压缩数据。例如，使用 <code>DMS.p0=0.2.csv</code> PMF进行编码时，压缩效果较好（压缩比为 1.3657），而使用不匹配的PMF（如 <code>DMS.p0=0.7.csv</code>）时，压缩效果较差，甚至出现了压缩比小于 1 的情况（压缩比为 0.6765）。</li>
+<li><strong>解码正确性</strong>: 所有解码结果均正确，解码后的文件与原始文件一致。</li>
+<li><strong>文件比较</strong>: 在文件比较阶段，源文件和解码文件完全一致，没有出现数据丢失或错误。</li>
+</ul>
+<h2 id="五-实验与理论对比">五、实验与理论对比 </h2>
+<p>实验需要通过 7z 工具对上述消息文件进行压缩，将其压缩结果与理论极限进行对比:</p>
+<h3 id="41三种概率分布下对比结果">4.1三种概率分布下对比结果 </h3>
+<h4 id="1等概率分布">1.等概率分布 </h4>
+<p>Huffman Coder:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>103175</mn><mo>≈</mo><mn>0.9925</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/103175 \approx 0.9925</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/103175</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.9925</span></span></span></span></span></li>
+</ul>
+<p>7-Zip:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>102548</mn><mo>≈</mo><mn>0.9986</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/102548 \approx 0.9986</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/102548</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.9986</span></span></span></span></span></li>
+</ul>
+<h4 id="2偏概率分布-1--px_0--08-px_1--02-">2.偏概率分布 1 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0.8</mn><mo separator="true">,</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">P(x_0) = 0.8, P(x_1) = 0.2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.2</span></span></span></span>) </h4>
+<p>Huffman Coder:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>75926</mn><mo>≈</mo><mn>1.3487</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/75926 \approx 1.3487</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/75926</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.3487</span></span></span></span></span></li>
+</ul>
+<p>7-Zip:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>77482</mn><mo>≈</mo><mn>1.3216</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/77482 \approx 1.3216</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/77482</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.3216</span></span></span></span></span></li>
+</ul>
+<h4 id="3偏概率分布-2--px_0--03-px_1--07-">3.偏概率分布 2 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0.3</mn><mo separator="true">,</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0.7</mn></mrow><annotation encoding="application/x-tex">P(x_0) = 0.3, P(x_1) = 0.7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.7</span></span></span></span>) </h4>
+<p>Huffman Coder:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>91636</mn><mo>≈</mo><mn>1.1175</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/91636 \approx 1.1175</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/91636</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.1175</span></span></span></span></span></li>
+</ul>
+<p>7-Zip:</p>
+<ul>
+<li><strong>压缩比</strong>：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>压缩比</mtext><mo>=</mo><mfrac><mtext>输入大小</mtext><mtext>输出大小</mtext></mfrac><mo>=</mo><mn>102400</mn><mi mathvariant="normal">/</mi><mn>92410</mn><mo>≈</mo><mn>1.1081</mn></mrow><annotation encoding="application/x-tex">\text{压缩比} = \frac{输入大小}{输出大小} = 102400/92410 \approx 1.1081</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">压缩比</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输出大小</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord cjk_fallback">输入大小</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">102400/92410</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1.1081</span></span></span></span></span></li>
+</ul>
+<p>可见：</p>
+<ul>
+<li>当源文件不是等概率分布时，压缩效果往往可以比7-Zip好。</li>
+<li>无论是霍夫曼编码还是7-Zip压缩工具，在等概率分布的信源输入情况下，都不能实现数据压缩，甚至变得更长。</li>
+</ul>
+<h3 id="42原因分析">4.2原因分析 </h3>
+<p>在信息理论中，<strong>信源编码定理</strong>指出，对于一个离散无记忆信源，其符号的最小平均编码长度由信源的<strong>熵</strong>决定。熵是衡量信源不确定性的指标，定义为：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>H</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><munder><mo>∑</mo><mi>i</mi></munder><mi>p</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo><msub><mrow><mi>log</mi><mo>⁡</mo></mrow><mn>2</mn></msub><mi>p</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H(X) = -\sum_{i} p(x_i) \log_2 p(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3277em;vertical-align:-1.2777em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span><br>
+其中，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> 是符号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 出现的概率。</p>
+<p>在实际应用中，压缩算法试图接近这一理论极限，但由于多种因素，实际压缩结果通常高于理论最小值。以下是导致这一差异的主要原因及其详细分析：</p>
+<h4 id="1-文件头信息">1. 文件头信息 </h4>
+<p>压缩文件通常包含元数据，例如：</p>
+<ul>
+<li>文件名；</li>
+<li>时间戳；</li>
+<li>压缩方法；</li>
+<li>文件校验信息（如 CRC 校验码）。</li>
+</ul>
+<p>这些元数据为文件管理和传输提供必要的信息，但会占用额外空间，从而导致压缩文件大小增加。</p>
+<h4 id="2-对齐填充">2. 对齐填充 </h4>
+<p>为了满足特定存储或传输设备的要求，压缩算法可能会在数据块之间添加填充字节以确保对齐。例如：</p>
+<ul>
+<li>数据块的起始地址可能需要对齐到某个固定的字节边界（如 4 字节、8 字节）。</li>
+<li>这些填充字节并不携带任何有效信息，但会显著增加压缩文件的大小，尤其是对于小文件。</li>
+</ul>
+<h4 id="3-压缩算法的实现差异">3. 压缩算法的实现差异 </h4>
+<p>不同压缩算法在处理相同数据时，可能产生不同的压缩比。以下是可能导致差异的因素：</p>
+<ul>
+<li><strong>优化程度</strong>：算法是否经过高度优化（如算术编码的实现效率）。</li>
+<li><strong>参数设置</strong>：例如块大小、字典大小等参数直接影响压缩效果。</li>
+<li><strong>数据预处理</strong>：是否对数据进行预处理（如重复模式提取、哈希映射）。</li>
+</ul>
+<p>即使是同一算法的不同实现，因设计目标和硬件优化程度不同，压缩效果也会有所差异。</p>
+<h4 id="4-概率分布不匹配">4. 概率分布不匹配 </h4>
+<p>理论计算基于信源概率分布的准确假设，压缩算法才能最优地利用数据的冗余性。然而，在实际中：</p>
+<ul>
+<li>数据的概率分布可能复杂且多变，与理想假设不一致；</li>
+<li>压缩算法可能基于局部概率分布估计，而非全局概率分布。</li>
+</ul>
+<p>如果实际数据的概率分布与假设不符，算法无法充分利用数据中的冗余性，导致压缩效果不佳。</p>
+<h4 id="5-无失真假设与实际误差">5. 无失真假设与实际误差 </h4>
+<p>理论计算通常假设无失真压缩，即解压后数据完全还原。但是：实际压缩可能引入<strong>量化误差</strong>或<strong>舍入误差</strong>；并且某些压缩算法（如有损压缩）可能舍弃部分信息以提高压缩比。虽然这些误差通常较小，但它们会使实际压缩结果偏离理论极限。</p>
+<h2 id="六-代码注释">六、代码注释 </h2>
+<p><code>exampleSourceCoder.py</code>片段<br>
+<code>encode()</code></p>
+<pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token comment"># 编码函数</span>
+<span class="token keyword keyword-def">def</span> <span class="token function">encode</span><span class="token punctuation">(</span>pmf_file_name<span class="token punctuation">,</span> in_file_name<span class="token punctuation">,</span> out_file_name<span class="token punctuation">,</span> byteorder <span class="token operator">=</span> <span class="token string">'little'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 读取概率质量函数文件，构建符号的概率字典</span>
+    <span class="token keyword keyword-with">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>pmf_file_name<span class="token punctuation">,</span> newline<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> csv_file<span class="token punctuation">:</span>
+        <span class="token comment"># 读取符号和概率，形成字典</span>
+        pmf <span class="token operator">=</span> <span class="token punctuation">{</span>np<span class="token punctuation">.</span>uint8<span class="token punctuation">(</span>row<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token builtin">float</span><span class="token punctuation">(</span>row<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword keyword-for">for</span> row <span class="token keyword keyword-in">in</span> csv<span class="token punctuation">.</span>reader<span class="token punctuation">(</span>csv_file<span class="token punctuation">)</span><span class="token punctuation">}</span>
+    codec <span class="token operator">=</span> HuffmanCodec<span class="token punctuation">.</span>from_frequencies<span class="token punctuation">(</span>pmf<span class="token punctuation">)</span>  <span class="token comment"># 使用给定的频率表构建霍夫曼编码器</span>
+    <span class="token comment"># 从输入文件读取源数据</span>
+    source <span class="token operator">=</span> np<span class="token punctuation">.</span>fromfile<span class="token punctuation">(</span>in_file_name<span class="token punctuation">,</span> dtype<span class="token operator">=</span><span class="token string">'uint8'</span><span class="token punctuation">)</span>  <span class="token comment">## 读取输入文件，数据格式为uint8</span>
+    encoded <span class="token operator">=</span> codec<span class="token punctuation">.</span>encode<span class="token punctuation">(</span>source<span class="token punctuation">)</span>  <span class="token comment"># 使用霍夫曼编码器对源数据进行编码</span>
+
+    <span class="token comment"># 获取霍夫曼编码器的码本</span>
+    codebook <span class="token operator">=</span> codec<span class="token punctuation">.</span>get_code_table<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># 设置字节序（小端字节序）</span>
+    <span class="token comment"># 构建文件头部：头部包含码本信息</span>
+    header <span class="token operator">=</span> <span class="token builtin">bytearray</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>  <span class="token comment"># 头部初始化（2字节）</span>
+    header<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>codebook<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>  <span class="token comment"># 符号计数（符号个数减去1）</span>
+    header<span class="token punctuation">.</span>extend<span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>source<span class="token punctuation">)</span><span class="token punctuation">.</span>to_bytes<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 源数据长度（4字节表示）</span>
+
+    <span class="token comment"># 遍历码本，添加每个符号对应的编码信息到头部</span>
+    <span class="token keyword keyword-for">for</span> symbol<span class="token punctuation">,</span> <span class="token punctuation">(</span>word_len<span class="token punctuation">,</span> word<span class="token punctuation">)</span> <span class="token keyword keyword-in">in</span> codebook<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        word_bytes <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>np<span class="token punctuation">.</span>ceil<span class="token punctuation">(</span>word_len <span class="token operator">/</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 计算编码的字节长度</span>
+        header<span class="token punctuation">.</span>append<span class="token punctuation">(</span>symbol<span class="token punctuation">)</span>  <span class="token comment"># 添加符号</span>
+        header<span class="token punctuation">.</span>append<span class="token punctuation">(</span>word_len<span class="token punctuation">)</span>  <span class="token comment"># 添加编码长度（单位：bit）</span>
+        header<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>word<span class="token punctuation">.</span>to_bytes<span class="token punctuation">(</span>word_bytes<span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 添加编码字节</span>
+    header<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>header<span class="token punctuation">)</span><span class="token punctuation">.</span>to_bytes<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span>  <span class="token comment"># 更新头部的大小信息（前2字节为头部长度）</span>
+
+    <span class="token comment"># 打开输出文件并写入头部和编码后的数据</span>
+    <span class="token keyword keyword-with">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>out_file_name<span class="token punctuation">,</span> <span class="token string">'wb'</span><span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> out_file<span class="token punctuation">:</span>
+        out_file<span class="token punctuation">.</span>write<span class="token punctuation">(</span>header<span class="token punctuation">)</span>  <span class="token comment"># 写入头部</span>
+        out_file<span class="token punctuation">.</span>write<span class="token punctuation">(</span>encoded<span class="token punctuation">)</span>  <span class="token comment"># 写入编码数据</span>
+
+    <span class="token keyword keyword-return">return</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>source<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>encoded<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 返回源数据的长度和编码后的数据长度</span>
+</code></pre><p><code>decode()</code></p>
+<pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token comment"># 解码函数</span>
+<span class="token keyword keyword-def">def</span> <span class="token function">decode</span><span class="token punctuation">(</span>in_file_name<span class="token punctuation">,</span> out_file_name<span class="token punctuation">,</span> byteorder <span class="token operator">=</span> <span class="token string">'little'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 字节序</span>
+    <span class="token comment"># 打开输入文件进行读取</span>
+    <span class="token keyword keyword-with">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>in_file_name<span class="token punctuation">,</span> <span class="token string">'rb'</span><span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> in_file<span class="token punctuation">:</span>
+        header_size <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>in_file<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span>  <span class="token comment"># 读取头部的大小</span>
+        header <span class="token operator">=</span> io<span class="token punctuation">.</span>BytesIO<span class="token punctuation">(</span>in_file<span class="token punctuation">.</span>read<span class="token punctuation">(</span>header_size <span class="token operator">-</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 读取头部数据（去掉前2字节）</span>
+        encoded <span class="token operator">=</span> in_file<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 读取编码后的数据</span>
+
+    <span class="token comment"># 解析码本信息</span>
+    codebook <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    symbol_count <span class="token operator">=</span> header<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>  <span class="token comment"># 读取符号计数</span>
+    source_len <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>header<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span>  <span class="token comment"># 读取源数据长度</span>
+
+    <span class="token comment"># 读取每个符号的编码信息并更新码本</span>
+    <span class="token keyword keyword-for">for</span> k <span class="token keyword keyword-in">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>symbol_count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        symbol <span class="token operator">=</span> np<span class="token punctuation">.</span>uint8<span class="token punctuation">(</span>header<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>  <span class="token comment"># 读取符号</span>
+        word_len <span class="token operator">=</span> header<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>  <span class="token comment"># 读取编码长度（单位：bit）</span>
+        word_bytes <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>np<span class="token punctuation">.</span>ceil<span class="token punctuation">(</span>word_len <span class="token operator">/</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 计算编码字节长度</span>
+        word <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>header<span class="token punctuation">.</span>read<span class="token punctuation">(</span>word_bytes<span class="token punctuation">)</span><span class="token punctuation">,</span> byteorder<span class="token punctuation">)</span>  <span class="token comment"># 读取编码字节并转换为整数</span>
+        codebook<span class="token punctuation">[</span>symbol<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span>word_len<span class="token punctuation">,</span> word<span class="token punctuation">)</span>  <span class="token comment"># 将符号和编码信息添加到码本中</span>
+
+    <span class="token comment"># 使用霍夫曼解码器进行解码</span>
+    codec <span class="token operator">=</span> HuffmanCodec<span class="token punctuation">(</span>codebook<span class="token punctuation">)</span>
+    decoded <span class="token operator">=</span> np<span class="token punctuation">.</span>asarray<span class="token punctuation">(</span>codec<span class="token punctuation">.</span>decode<span class="token punctuation">(</span>encoded<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token punctuation">:</span>source_len<span class="token punctuation">]</span>  <span class="token comment"># 解码并截取源数据长度</span>
+    decoded<span class="token punctuation">.</span>tofile<span class="token punctuation">(</span>out_file_name<span class="token punctuation">)</span>  <span class="token comment"># 将解码后的数据写入输出文件</span>
+
+    <span class="token keyword keyword-return">return</span> <span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>encoded<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>decoded<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 返回编码数据的长度和解码后的数据长度</span>
+</code></pre>
+      </div>
+      
+      
+    
+    
+    <script type="module">
+// TODO: If ZenUML gets integrated into mermaid in the future,
+//      we can remove the following lines.
+
+
+var MERMAID_CONFIG = ({"startOnLoad":false});
+if (typeof MERMAID_CONFIG !== 'undefined') {
+  MERMAID_CONFIG.startOnLoad = false
+  MERMAID_CONFIG.cloneCssStyles = false
+  MERMAID_CONFIG.theme = "default"
+}
+
+mermaid.initialize(MERMAID_CONFIG || {})
+if (typeof(window['Reveal']) !== 'undefined') {
+  function mermaidRevealHelper(event) {
+    var currentSlide = event.currentSlide
+    var diagrams = currentSlide.querySelectorAll('.mermaid')
+    for (var i = 0; i < diagrams.length; i++) {
+      var diagram = diagrams[i]
+      if (!diagram.hasAttribute('data-processed')) {
+        mermaid.init(null, diagram, ()=> {
+          Reveal.slide(event.indexh, event.indexv)
+        })
+      }
+    }
+  }
+  Reveal.addEventListener('slidetransitionend', mermaidRevealHelper)
+  Reveal.addEventListener('ready', mermaidRevealHelper)
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+} else {
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+}
+</script>
+    
+    
+    
+  
+    </body></html>
