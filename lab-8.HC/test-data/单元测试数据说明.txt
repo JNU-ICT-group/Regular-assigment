@@ -1,0 +1,8 @@
+pmf_uniform.csv & source_uniform.dat
+	使用的信源数据为均匀分布：测试使用过程中的一般情况。
+
+pmf_empty.csv & source_empty.dat
+	使用的信源数据为空：测试空文件时编码、解码是否不能工作，模拟信源阻塞无输出的情况。
+
+pmf_unmapped.csv & source_unmapped.dat
+	使用的概率分布文件（PMF）和信源数据（DAT）不完全匹配：当获取的估计概率分布和实际概率分布不一致时，检验编码、解码算法；比较压缩效果的变化，检查霍夫曼码书生成算法是否为最优。相当于模拟实际使用中信源的概率分布局部波动的情况。

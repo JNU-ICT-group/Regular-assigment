@@ -30,7 +30,7 @@ class TestByteSourceCoder(unittest.TestCase):
         # 设置测试数据目录和文件路径
         cls.test_data_dir = 'test-data'
         cls.pmf_file_name = os.path.join(cls.test_data_dir, 'pmf.csv')
-        cls.source_file_name = os.path.join(cls.test_data_dir, 'source.len=64KB.dat')
+        cls.source_file_name = os.path.join(cls.test_data_dir, 'source.dat')
         cls.encoded_file_name = os.path.join(cls.test_data_dir, '_encoded.tmp')
         cls.decoded_file_name = os.path.join(cls.test_data_dir, '_decoded.tmp')
 
@@ -75,6 +75,7 @@ class TestByteSourceCoder(unittest.TestCase):
         # 测试源文件和解码文件的比较
         diff_total = test_once(self.pmf_file_name, self.source_file_name, self.encoded_file_name, self.decoded_file_name)
         self.assertEqual(diff_total, 0, "源文件和解码文件应完全相同")
+        pass
 
     def test_unmapped_distribution(self):
         # 生成测试源文件（模拟数据）
@@ -83,7 +84,7 @@ class TestByteSourceCoder(unittest.TestCase):
         data.tofile(self.source_file_name)
 
         # 创建 PMF 文件（概率质量函数）
-        pmf_data = [(i, round(i / 256.0, 6)) for i in range(256)]  # 使用均匀分布的概率
+        pmf_data = [(i, round(i / 256.0, 6)) for i in range(256)]  # 使用分布不匹配的概率
         with open(self.pmf_file_name, 'w', newline='') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE)
             writer.writerows(pmf_data)
