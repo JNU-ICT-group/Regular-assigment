@@ -6,7 +6,8 @@ The format specification of the encoded file used here is:
 
 Header  |LEN  : uint8, code length n, must be odd number and 2 < n < 10
         |source length : uint32, number of symbols in source divided by 8
-Payload |codeword sequence : many unit8
+Payload |codeword sequence : many uint
+End |pad : some bits as 0
 
 Note: This program is intended for use in course, Principle of Information and Coding Theory.
 
@@ -15,7 +16,7 @@ Note: This program is intended for use in course, Principle of Information and C
 import csv
 import os
 import argparse
-from bitstring import BitStream, Bits
+import bitstring
 
 # Non-standard library
 import numpy as np
@@ -43,25 +44,33 @@ def main():
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
     args = parser.parse_args()
+    INPUT = path_split(args.INPUT)
+    OUTPUT = path_split(args.OUTPUT)
 
     # Execute based on sub-command
     if args.command == 'encode':
-        print('Encoding %s (repeats=%d) ...' % (os.path.basename(args.INPUT), args.LEN))
-        (source_len, encoded_len) = encode(args.LEN, args.INPUT, args.OUTPUT)
-        print(f'\t Source len: {source_len} B')
-        print(f'\tEncoded len: {encoded_len} B')
-        print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
+        for INPUT, OUTPUT in zip(INPUT, OUTPUT):
+            print('Encoding %s (repeats=%d) ...' % (os.path.basename(INPUT), args.LEN))
+            (source_len, encoded_len) = encode(args.LEN, INPUT, OUTPUT)
+            print(f'\t Source len: {source_len} B')
+            print(f'\tEncoded len: {encoded_len} B')
+            print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
 
     elif args.command == 'decode':
-        print('Decoding %s ...' % os.path.basename(args.INPUT))
-        (encoded_len, decoded_len) = decode(args.INPUT, args.OUTPUT)
-        print(f'\tEncoded len: {encoded_len} B')
-        print(f'\tDecoded len: {decoded_len} B')
+        for INPUT, OUTPUT in zip(INPUT, OUTPUT):
+            print('Decoding %s ...' % os.path.basename(INPUT))
+            (encoded_len, decoded_len) = decode(INPUT, OUTPUT)
+            print(f'\tEncoded len: {encoded_len} B')
+            print(f'\tDecoded len: {decoded_len} B')
 
     elif args.test:
         test()
     else:
         parser.print_help()
+
+
+def path_split(path):
+    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
 # 编码函数
@@ -76,11 +85,18 @@ def encode(len_code, input_path, output_path):
     if len_code <= 2 or len_code >= 10 or len_code % 2 == 0:
         raise ValueError("Code length must be an odd number and 2 < len_code < 10.")
 
+    # # Create a BitStream to represent the encoded data
+    # stream = bitstring.ConstBitStream(filename=input_path)
+    # with open(output_path, 'wb') as f:
+    #     encoded = bitstring.BitArray('uint:8=%d, uint:32=%d' % (len_code, stream.length // 8))
+    #     one = bitstring.Bits('int:%d=-1' % len_code)
+    #     for val in stream:
+    #         encoded.append(one if val else len_code)
+    #
+    #     encoded.tofile(f)
+
     # Read the input file as binary
     source = np.fromfile(input_path, dtype=np.uint8)
-
-    # Create a BitStream to represent the encoded data
-    encoded_stream = BitStream()
 
     # Encode each bit using repetition code
     data = np.unpackbits(source).astype(np.uint8)
@@ -96,7 +112,7 @@ def encode(len_code, input_path, output_path):
         output_file.write(len(source).to_bytes(4, 'big'))
         data.tofile(output_file)
 
-    return (len(source), len(data))  # 返回源数据的长度和编码后的数据长度
+    return (len(source), len(data)-5)  # 返回源数据的长度和编码后的数据长度
 
 
 # 解码函数
@@ -108,12 +124,20 @@ def decode(input_path, output_path):
     output_path: str, path to the decoded output file
     """
     # # Read the encoded file as a BitStream
-    # encoded_stream = BitStream(filename=input_path)
-    #
+    # encoded_stream = bitstring.ConstBitStream(filename=input_path)
     # # Determine the repetition length from the bitstream length (assume constant repetition length)
-    # len_code = None
-    # for bit_pos in range(0, len(encoded_stream), 8):
-    #     byte = encoded_stream[bit_pos: bit_pos + 8]
+    # len_code = encoded_stream.read(8).uint
+    # length = encoded_stream.read(32).uint * 8
+    # threshord = len_code // 2
+    # with open(output_path, 'wb') as f:
+    #     decoded_stream = bitstring.BitArray()
+    #
+    #     one = bitstring.Bits('uint:1=1')
+    #     for i in range(length):
+    #         decoded_stream.append(one if encoded_stream.read(len_code).count(1) > threshord else 1)
+    #
+    #     decoded_stream.tofile(f)
+
     source = np.fromfile(input_path, dtype=np.uint8)
     len_code = source[0]
     msg_length = int.from_bytes(source[1:5].tobytes(), 'big')
