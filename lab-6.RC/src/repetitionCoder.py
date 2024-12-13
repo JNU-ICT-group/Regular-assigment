@@ -129,6 +129,14 @@ def decode(input_path, output_path):
     data = np.packbits(data, axis=1)
     data.tofile(output_path)
 
+    # Read the encoded data from the input file
+    with open(input_path, 'rb') as input_file:
+        B_bytes = input_file.read()
+    B = BitStream(B_bytes)
+    B_value = B.unpack('%d*uint:%d' % (msg_length * 8, code_length))
+    # Write the encoded data to the output file
+    with open(output_path, 'wb') as output_file:
+
     return (len(source)-5, len(data))  # 返回编码数据的长度和解码后的数据长度
 
 
