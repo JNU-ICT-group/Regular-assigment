@@ -6,7 +6,8 @@ The format specification of the encoded file used here is:
 
 Header  |LEN  : uint8, code length n, must be odd number and 2 < n < 10
         |source length : uint32, number of symbols in source divided by 8
-Payload |codeword sequence : many unit8
+Payload |codeword sequence : many uint
+End |pad : some bits as 0
 
 Note: This program is intended for use in course, Principle of Information and Coding Theory.
 
@@ -34,13 +35,20 @@ def main():
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
     args = parser.parse_args()
+    INPUT1 = path_split(args.INPUT1)
+    INPUT2 = path_split(args.INPUT2)
 
-    print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(args.INPUT1), os.path.basename(args.INPUT2)))
-    compare_file(args.INPUT1, args.INPUT2, args.RESULT)
-    print('')
+    for file1_path, file2_path in zip(INPUT1, INPUT2):
+        print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(file1_path), os.path.basename(file2_path)))
+        compare_file(file1_path, file2_path, args.RESULT)
+        print('')
 
     if args.test:
         test()
+
+
+def path_split(path):
+    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
 # 文件比较函数，比较两个文件的差异
@@ -74,8 +82,6 @@ def compare_file(file1_path, file2_path, result_path):
         writer = csv.writer(result_file)
         # 写入 CSV 内容
         writer.writerow([file1_path, file2_path, error_rate])
-
-    print(f"误码率计算完成，结果已保存到 {result_path}")
 
     print('Total %d bytes are different.' % (diff_total))
 

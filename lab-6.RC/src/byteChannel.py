@@ -55,8 +55,8 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
     arr = read_input(input_path)
     noise = read_input(noise_path)
     if len(arr)*8 != len(noise) and len(arr) != len(noise):
-        raise ValueError("NOISE must have the size 8-times longer than INPUT, "
-                         "while NOISE values only 1-bits.")
+        raise ValueError("NOISE(%d) must have the size 8-times longer than INPUT(%d), "
+                         "while NOISE values only 1-bits." % (len(noise), len(arr)))
     out = generate_error_channel(arr, noise)
     write_output(output_path, out)
 
