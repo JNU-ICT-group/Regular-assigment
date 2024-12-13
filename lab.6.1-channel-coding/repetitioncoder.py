@@ -26,7 +26,9 @@ def encode_repetition(len_code, input_path, output_path):
     for byte in data:
         for i in range(8):
             bit = (byte >> (7 - i)) & 1
-            encoded_stream.append(Bits(uint=bit * len_code, length=len_code))
+            # 将每个比特重复 len_code 次
+            encoded_stream.append(Bits(uint=bit, length=1) * len_code)
+
 
     # Write the encoded data to the output file
     with open(output_path, 'wb') as output_file:
