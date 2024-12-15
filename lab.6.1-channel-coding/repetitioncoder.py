@@ -30,6 +30,7 @@ def encode_repetition(len_code, input_path, output_path):
             encoded_stream.append(Bits(uint=bit, length=1) * len_code)
 
 
+
     # Write the encoded data to the output file
     with open(output_path, 'wb') as output_file:
         encoded_stream.tofile(output_file)
