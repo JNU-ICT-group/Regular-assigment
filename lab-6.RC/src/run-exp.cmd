@@ -18,7 +18,7 @@ set "_SOURCE_FILE=unit-data\source.dat"
 set "_RESULT_FILE=unit-data\result.csv"
 
 :: Probabilities of DMSs
-set _ERRORS=0.1,0.2,0.3
+set _ERRORS=0.2,0.5,0.7
 set _ERRORS_T=
 set _REPEAT_LENGTH=3,5,7
 
@@ -117,7 +117,7 @@ for %%j in (%_REPEAT_LENGTH%) do (
     call %_Calc% !INPUT! !OUTPUT! %_RESULT_FILE%
 )
 
-echo >>%_RESULT_FILE%
+echo:>>%_RESULT_FILE%
 
 :: Return to the previous directory.
 popd
