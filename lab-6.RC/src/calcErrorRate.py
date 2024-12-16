@@ -16,9 +16,12 @@ Note: This program is intended for use in course, Principle of Information and C
 import csv
 import os
 import argparse
+import unittest
 
 # Non-standard library
 import numpy as np
+
+
 
 __author__ = "Zhang, Pengyang; Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn"
@@ -28,13 +31,16 @@ __version__ = "20241212.2220"
 def main():
     parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
 
-    parser.add_argument('INPUT1', type=str, help='path to input file 1')
-    parser.add_argument('INPUT2', type=str, help='path to input file 2')
-    parser.add_argument('RESULT', type=str, help='path to the result CSV file')
+    parser.add_argument('INPUT1', type=str, nargs='?', help='path to input file 1')
+    parser.add_argument('INPUT2', type=str, nargs='?', help='path to input file 2')
+    parser.add_argument('RESULT', type=str, nargs='?', help='path to the result CSV file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
     args = parser.parse_args()
+    if args.test:
+        return test()
+
     INPUT1 = path_split(args.INPUT1)
     INPUT2 = path_split(args.INPUT2)
 
@@ -42,9 +48,6 @@ def main():
         print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(file1_path), os.path.basename(file2_path)))
         compare_file(file1_path, file2_path, args.RESULT)
         print('')
-
-    if args.test:
-        test()
 
 
 def path_split(path):
@@ -62,8 +65,7 @@ def compare_file(file1_path, file2_path, result_path):
     """
     # 检查文件是否存在
     if not os.path.exists(file1_path) or not os.path.exists(file2_path):
-        print("文件路径错误，文件不存在")
-        return
+        raise FileNotFoundError("文件路径错误，文件不存在")
 
     data1 = np.fromfile(file1_path, dtype='uint8')  # 读取第一个文件的数据
     data2 = np.fromfile(file2_path, dtype='uint8')  # 读取第二个文件的数据
@@ -74,8 +76,13 @@ def compare_file(file1_path, file2_path, result_path):
         print('          Comparing the first %d bytes only.' % (compare_size))
 
     # 比较两个文件的数据，统计不同的字节数
-    diff_total = np.sum(data1[:compare_size] != data2[:compare_size])  # 统计不同字节的总数
-    error_rate = diff_total / compare_size
+    if compare_size == 0:
+        print('[WARNING] These two files have least one Empty.')
+        diff_total = 0
+        error_rate = 0.0
+    else:
+        diff_total = np.unpackbits(data1[:compare_size] ^ data2[:compare_size]).sum()  # 统计不同字节的总数
+        error_rate = diff_total / (compare_size * 8)
 
     # 保存结果到 CSV 文件
     with open(result_path, 'a', newline='') as result_file:
@@ -87,11 +94,147 @@ def compare_file(file1_path, file2_path, result_path):
 
     return diff_total
 
+class TestCalculateErrorRate(unittest.TestCase):
+
+    def setUp(self):
+        """
+        测试前的准备工作，生成一些临时文件。
+        """
+        self.file1_path = "test_file1.bin"
+        self.file2_path = "test_file2.bin"
+        self.result_path = "test_result.csv"
+
+        # 创建文件1，内容为 0b10101010
+        with open(self.file1_path, "wb") as file1:
+            file1.write(b"\xAA")
+
+        # 创建文件2，内容为 0b10101010
+        with open(self.file2_path, "wb") as file2:
+            file2.write(b"\xAA")
+
+    def tearDown(self):
+        """
+        测试结束后的清理工作，删除临时文件。
+        """
+        if os.path.exists(self.file1_path):
+            os.remove(self.file1_path)
+        if os.path.exists(self.file2_path):
+            os.remove(self.file2_path)
+        if os.path.exists(self.result_path):
+            os.remove(self.result_path)
+
+    def test_identical_files(self):
+        """
+        测试两个完全相同的文件，误码率应为 0.0。
+        """
+        print("Test 1: Testing identical files with 0.0 error rate.")
+        compare_file(self.file1_path, self.file2_path, self.result_path)
+
+        # 检查结果文件内容
+        with open(self.result_path, "r") as result_file:
+            result = result_file.read().strip()
+        self.assertEqual(result, f"{self.file1_path},{self.file2_path},0.0")
+        print("Test 1 passed: Identical files tested successfully.")
+        print()
+
+    def test_different_files(self):
+        """
+        测试两个完全不同的文件，误码率应为 1.0。
+        """
+        print("Test 2: Testing completely different files with 1.0 error rate.")
+        # 修改文件2的内容为 0b01010101
+        with open(self.file2_path, "wb") as file2:
+            file2.write(b"\x55")
+
+        compare_file(self.file1_path, self.file2_path, self.result_path)
+
+        # 检查结果文件内容
+        with open(self.result_path, "r") as result_file:
+            result = result_file.read().strip()
+        self.assertEqual(result, f"{self.file1_path},{self.file2_path},1.0")
+        print("Test 2 passed: Different files tested successfully.")
+        print()
+
+    def test_partial_difference(self):
+        """
+        测试两个部分不同的文件。
+        """
+        print("Test 3: Testing partially different files with calculated error rate.")
+        # 修改文件2的内容为 0b10101011
+        with open(self.file2_path, "wb") as file2:
+            file2.write(b"\xAB")
+
+        compare_file(self.file1_path, self.file2_path, self.result_path)
+
+        # 检查结果文件内容
+        with open(self.result_path, "r") as result_file:
+            result = result_file.read().strip()
+        self.assertEqual(result, f"{self.file1_path},{self.file2_path},0.125")
+        print("Test 3 passed: Partially different files tested successfully.")
+        print()
+
+    def test_file_size_mismatch(self):
+        """
+        测试两个文件大小不一致的情况。
+        """
+        print("Test 4: Testing file size mismatch case.")
+        # 修改文件2的内容为两个字节
+        with open(self.file2_path, "wb") as file2:
+            file2.write(b"\xAA\xAA")
+
+        try:
+            compare_file(self.file1_path, self.file2_path, self.result_path)
+            print("Expected ValueError was not raised for file size mismatch")
+        except ValueError as e:
+            print(f"Caught expected ValueError: {e}")
+        print("Test 4 passed: File size mismatch handled correctly.")
+        print()
+
+    def test_file_not_exist(self):
+        """
+        测试文件路径无效的情况。
+        """
+        print("Test 5: Testing file not exist case.")
+        invalid_path = "nonexistent_file.bin"
+        try:
+            compare_file(invalid_path, self.file2_path, self.result_path)
+            print("Expected FileNotFoundError was not raised for non-existent file")
+            print()
+        except FileNotFoundError as e:
+            print(f"Caught expected FileNotFoundError: {e}")
+        print("Test 5 passed: Nonexistent file handled correctly.")
+        print()
+
+    def test_empty_files(self):
+        """
+        测试空文件的情况，误码率应为 0.0。
+        """
+        print("Test 6: Testing empty files with 0.0 error rate.")
+        # 创建空文件
+        with open(self.file1_path, "wb") as file1:
+            file1.write(b"")
+        with open(self.file2_path, "wb") as file2:
+            file2.write(b"")
+
+        try:
+            compare_file(self.file1_path, self.file2_path, self.result_path)
+            print("Calculation completed without ZeroDivisionError for empty files")
+        except ZeroDivisionError as e:
+            print(f"Caught ZeroDivisionError: {e}")
+
+        # 检查结果文件内容（先判断文件是否存在）
+        if os.path.exists(self.result_path):
+            with open(self.result_path, "r") as result_file:
+                result = result_file.read().strip()
+            self.assertEqual(result, f"{self.file1_path},{self.file2_path},0.0")
+            print("Test 6 passed: Empty files tested successfully.")
+        else:
+            print(f"Result file {self.result_path} not found after calculating for empty files")
+        print()
 
 # 测试函数
 def test():
-    import unittest
-    ...
+    unittest.main(argv=['calcErrorRate'])
 
 
 # 主程序入口

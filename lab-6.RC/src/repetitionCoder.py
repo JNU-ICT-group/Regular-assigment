@@ -44,6 +44,9 @@ def main():
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
     args = parser.parse_args()
+    if args.test:
+        return test()
+
     INPUT = path_split(args.INPUT)
     OUTPUT = path_split(args.OUTPUT)
 
@@ -63,8 +66,6 @@ def main():
             print(f'\tEncoded len: {encoded_len} B')
             print(f'\tDecoded len: {decoded_len} B')
 
-    elif args.test:
-        test()
     else:
         parser.print_help()
 
@@ -137,18 +138,24 @@ def decode(input_path, output_path):
     #         decoded_stream.append(one if encoded_stream.read(len_code).count(1) > threshord else 1)
     #
     #     decoded_stream.tofile(f)
-
-    source = np.fromfile(input_path, dtype=np.uint8)
+    try:
+        source = np.fromfile(input_path, dtype=np.uint8)
+    except ValueError:
+        raise ValueError("Decoding a File Empty.")
     len_code = source[0]
+    encoder_length = len(source)
+    if encoder_length < 5:
+        raise TypeError("Haven't a Header.")
     msg_length = int.from_bytes(source[1:5].tobytes(), 'big')
     # print(len_code, msg_length)
+    if encoder_length - 5 < msg_length * len_code:
+        raise TypeError("Payload doesn't follow the rules of Header.")
     data = np.unpackbits(source[5:]).astype(np.uint8)
     code_length = msg_length * 8 * len_code
     threshord = len_code // 2
     data = data[:code_length]
     data.resize((msg_length * 8, len_code))
-    data = data.sum(axis=1)
-    np.putmask(data, data > threshord, 1)
+    data = (data.sum(axis=1) > threshord).view(np.uint8)
     data.resize((msg_length, 8))
     data = np.packbits(data, axis=1)
     data.tofile(output_path)
@@ -159,7 +166,8 @@ def decode(input_path, output_path):
 # 测试函数
 def test():
     import unittest
-    ...
+    import unitTest
+    unittest.main(unitTest, argv=['unitTest'])
 
 
 # 主程序入口
