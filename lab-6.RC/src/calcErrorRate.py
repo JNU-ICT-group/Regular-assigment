@@ -17,6 +17,7 @@ import csv
 import os
 import argparse
 import unittest
+import math
 
 # Non-standard library
 import numpy as np
@@ -30,6 +31,7 @@ __version__ = "20241212.2220"
 
 def main():
     parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
+    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
 
     parser.add_argument('INPUT1', type=str, nargs='?', help='path to input file 1')
     parser.add_argument('INPUT2', type=str, nargs='?', help='path to input file 2')
@@ -37,9 +39,19 @@ def main():
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
+    # thory sub-command
+    parser_calc = subparsers.add_parser('calc', help='calculate a thory case.')
+    parser_calc.add_argument('LEN_CODE', type=int, help='Code Repeats.')
+    parser_calc.add_argument('ERROR', type=float, help='Transmission error rate.')
+
     args = parser.parse_args()
     if args.test:
         return test()
+
+    if args.command == 'calc':
+    	Pe = theoryCalcError(args.LEN_CODE, args.ERROR)
+    	print("Theory Error-Rate:", Pe)
+    	return Pe
 
     INPUT1 = path_split(args.INPUT1)
     INPUT2 = path_split(args.INPUT2)
@@ -93,6 +105,27 @@ def compare_file(file1_path, file2_path, result_path):
     print('Total %d bytes are different.' % (diff_total))
 
     return diff_total
+
+
+def binomialCoef(n, k):
+	a = 1
+	for i in range(k+1, n+1): a *= i
+	b = math.factorial(n - k)
+	return a / b
+
+
+def theoryCalcError(n, p):
+	if p<0. or p>1.:
+		raise ValueError("error_rate of BSC must between 0.&1.")
+	if not isinstance(n, int) or n < 1:
+		raise ValueError("Repeats must positive intager.")
+	Pe = 0.
+	for k in range((n+1)//2, n+1):
+		bc = binomialCoef(n, k)
+		# print(n, k, bc)
+		Pe += bc * pow(p, k) * pow(1 - p, (n - k))
+	return Pe
+
 
 class TestCalculateErrorRate(unittest.TestCase):
 
