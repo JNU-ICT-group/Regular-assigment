@@ -142,7 +142,7 @@ def decode(input_path, output_path):
         source = np.fromfile(input_path, dtype=np.uint8)
     except ValueError:
         raise ValueError("Decoding a File Empty.")
-    len_code = source[0]
+    len_code = int(source[0])
     encoder_length = len(source)
     if encoder_length < 5:
         raise TypeError("Haven't a Header.")
