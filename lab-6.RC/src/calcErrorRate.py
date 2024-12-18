@@ -23,7 +23,6 @@ import math
 import numpy as np
 
 
-
 __author__ = "Zhang, Pengyang; Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn"
 __version__ = "20241212.2220"
@@ -49,9 +48,9 @@ def main():
         return test()
 
     if args.command == 'calc':
-    	Pe = theoryCalcError(args.LEN_CODE, args.ERROR)
-    	print("Theory Error-Rate:", Pe)
-    	return Pe
+        Pe = theoryCalcError(args.LEN_CODE, args.ERROR)
+        print("Theory Error-Rate: %.8f" % Pe)
+        return Pe
 
     INPUT1 = path_split(args.INPUT1)
     INPUT2 = path_split(args.INPUT2)
@@ -108,27 +107,26 @@ def compare_file(file1_path, file2_path, result_path):
 
 
 def binomialCoef(n, k):
-	a = 1
-	for i in range(k+1, n+1): a *= i
-	b = math.factorial(n - k)
-	return a / b
+    a = 1
+    for i in range(k+1, n+1): a *= i
+    b = math.factorial(n - k)
+    return a / b
 
 
 def theoryCalcError(n, p):
-	if p<0. or p>1.:
-		raise ValueError("error_rate of BSC must between 0.&1.")
-	if not isinstance(n, int) or n < 1:
-		raise ValueError("Repeats must positive intager.")
-	Pe = 0.
-	for k in range((n+1)//2, n+1):
-		bc = binomialCoef(n, k)
-		# print(n, k, bc)
-		Pe += bc * pow(p, k) * pow(1 - p, (n - k))
-	return Pe
+    if p<0. or p>1.:
+        raise ValueError("error_rate of BSC must between 0.&1.")
+    if not isinstance(n, int) or n < 1:
+        raise ValueError("Repeats must positive intager.")
+    Pe = 0.
+    for k in range((n+1)//2, n+1):
+        bc = binomialCoef(n, k)
+        # print(n, k, bc)
+        Pe += bc * pow(p, k) * pow(1 - p, (n - k))
+    return Pe
 
 
 class TestCalculateErrorRate(unittest.TestCase):
-
     def setUp(self):
         """
         测试前的准备工作，生成一些临时文件。
