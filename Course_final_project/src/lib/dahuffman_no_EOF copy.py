@@ -1,4 +1,5 @@
-from ..lib import dahuffman
+import dahuffman
+
 class HuffmanCodec(dahuffman.HuffmanCodec):
     """A wrapper class of `dahuffman.HuffmanCodec` for NOT using EOF symbol.
 
@@ -22,6 +23,8 @@ class HuffmanCodec(dahuffman.HuffmanCodec):
     def __init__(self, code_table, concat=list, check=True, eof=None):
         # Set EOF symbol to be the first symbol in `code_table`, so that encode() `dahuffman` will not fail. 
         eof = next(iter(code_table.keys()))
+        # # Set EOF symbol to be the most likely to occur symbol in `code_table`, so that encode() `dahuffman`
+        # eof = max(code_table.items(), key=lambda x: x[1])[0]
         super().__init__(code_table, concat=concat, check=check, eof=eof)
 
     @classmethod
