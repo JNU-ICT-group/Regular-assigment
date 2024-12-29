@@ -116,8 +116,8 @@ def binomialCoef(n, k):
 def theoryCalcError(n, p):
     if p<0. or p>1.:
         raise ValueError("error_rate of BSC must between 0.&1.")
-    if not isinstance(n, int) or n < 1:
-        raise ValueError("Repeats must positive intager.")
+    if not isinstance(n, int) or n < 1 or (n % 2 == 0):
+        raise ValueError("Repeats must positive prime number.")
     Pe = 0.
     for k in range((n+1)//2, n+1):
         bc = binomialCoef(n, k)
