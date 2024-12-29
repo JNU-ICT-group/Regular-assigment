@@ -24,6 +24,8 @@ set "EXP_CMD=python byteSource.py"
 
 :: ----- Config : end
 
+if not exist %EXP_OUTPUT_DIR% mkdir %EXP_OUTPUT_DIR%
+
 :: Get this script's directory
 for %%I in ("%~dp0.") do set "SCRIPT_DIR=%%~fI"
 
