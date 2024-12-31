@@ -1,7 +1,9 @@
 /__pycache__
 _tmp.*
-DMS.*.dat
+DMS.p0=*.dat
 DMS.*.csv
+BSC.*.dat
+BSC.p=*.csv
 RC.*.dat
 *.zip
 *.7z
