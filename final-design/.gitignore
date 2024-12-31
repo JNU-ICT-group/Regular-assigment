@@ -3,3 +3,6 @@ _tmp.*
 DMS.*.dat
 DMS.*.csv
 RC.*.dat
+*.zip
+*.7z
+HC.*.dat

@@ -1,0 +1,6 @@
+/__pycache__
+_tmp.*
+DMS.*.dat
+DMS.*.csv
+*.csv.dat
+*.PDF.csv
