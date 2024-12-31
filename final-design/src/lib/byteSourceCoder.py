@@ -57,27 +57,34 @@ def main():
     parser_compare.add_argument('OUTPUT', type=str, help='Path to the decoded file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
 
     args = parser.parse_args()
 
     # Execute based on sub-command
     if args.command == 'encode':
-        print('Encoding %s (PMF=%s) ...' % (os.path.basename(args.INPUT), os.path.basename(args.PMF)))
+        if args.verbose:
+            print('Encoding %s (PMF=%s) ...' % (os.path.basename(args.INPUT), os.path.basename(args.PMF)))
         (source_len, encoded_len) = encode(args.PMF, args.INPUT, args.OUTPUT)
-        print(f'\t Source len: {source_len} B')
-        print(f'\tEncoded len: {encoded_len} B')
-        print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
+        if args.verbose:
+            print(f'\t Source len: {source_len} B')
+            print(f'\tEncoded len: {encoded_len} B')
+            print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
 
     elif args.command == 'decode':
-        print('Decoding %s ...' % os.path.basename(args.INPUT))
+        if args.verbose:
+            print('Decoding %s ...' % os.path.basename(args.INPUT))
         (encoded_len, decoded_len) = decode(args.INPUT, args.OUTPUT)
-        print(f'\tEncoded len: {encoded_len} B')
-        print(f'\tDecoded len: {decoded_len} B')
+        if args.verbose:
+            print(f'\tEncoded len: {encoded_len} B')
+            print(f'\tDecoded len: {decoded_len} B')
 
     elif args.command == 'compare':
-        print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(args.SOURCE), os.path.basename(args.OUTPUT)))
+        if args.verbose:
+            print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(args.SOURCE), os.path.basename(args.OUTPUT)))
         compare_file(args.SOURCE, args.OUTPUT)
-        print('')
+        if args.verbose:
+            print('')
 
     elif args.test:
         test()

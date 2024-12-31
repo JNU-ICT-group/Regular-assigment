@@ -16,6 +16,7 @@
 import os
 import sys
 import subprocess
+from subprocess import check_call
 import typing
 
 
@@ -38,6 +39,7 @@ cmd_calc_theory = r'python lib\calcInfo.py '
 msg_length = 102400
 repeat_length = 3
 repeat_header_size = 5
+rs = 1.0
 data_dir = '..\\data'
 
 info = [
@@ -64,69 +66,86 @@ def read_file_size(path):
         f.seek(0, 2)
         return f.tell()
 
+def read_header_size(path):
+    with open(path, 'rb') as f:
+        return int.from_bytes(f.read(2), 'little')
+
+
 if not os.path.exists(data_dir) or os.path.isfile(data_dir):
     if os.path.isfile(data_dir):
         os.remove(data_dir)
     os.mkdir(data_dir)
+
+source_info_path = os.path.join(data_dir, 'DMS.info.csv')
+channel_info_path = os.path.join(data_dir, 'BSC.info.csv')
+channel_codec_info_path = os.path.join(data_dir, 'RC.info.csv')
+source_codec_info_path = os.path.join(data_dir, 'HC.info.csv')
+theory_info_path = os.path.join(data_dir, 'results.csv')
+# for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
+#     if os.path.isfile(info_path):
+#         os.remove(info_path)
 
 for case in cases:
     # 信源
     prob1 = 1. - case['prob0']
     source_csv_path = os.path.join(data_dir, 'DMS.p0=%.3f.csv' % case['prob0'])
     source_path = os.path.join(data_dir, 'DMS.p0=%.3f.dat' % case['prob0'])
-    subprocess.check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(prob1, source_csv_path))
-    subprocess.check_call(cmd_source + ' "{:s}" "{:s}" {:d}'.format(source_csv_path, source_path, msg_length))
+    check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(prob1, source_csv_path))
+    check_call(cmd_source + ' "{:s}" "{:s}" {:d}'.format(source_csv_path, source_path, msg_length))
     # 信源编码
     if case['source_codec']:
         source_codec_path = os.path.join(data_dir, 'HC.en.p0={:.3f}.dat'.format(case['prob0']))
-        subprocess.check_call(cmd_codec_source + ' encode "{}" "{}" "{}"'.format(source_csv_path, source_path, source_codec_path))
+        check_call(cmd_codec_source + ' encode "{}" "{}" "{}"'.format(source_csv_path, source_path, source_codec_path))
+        source_codec_header = read_header_size(source_codec_path)
     else:
         source_codec_path = source_path
+        source_codec_header = 0
     # 信道编码
     if case['channel_codec']:
         channel_codec_path = os.path.join(data_dir, 'RC.en.p0={:.3f}.dat'.format(case['prob0']))
-        subprocess.check_call(cmd_codec_channel + ' encode {:d} "{}" "{}"'.format(repeat_length, source_codec_path, channel_codec_path))
+        check_call(cmd_codec_channel + ' encode {:d} "{}" "{}"'.format(repeat_length, source_codec_path, channel_codec_path))
+        channel_codec_header = repeat_header_size
     else:
+        channel_codec_header = 0
         channel_codec_path = source_codec_path
-    channel_codec_length = read_file_size(channel_codec_path) - repeat_header_size
+    channel_codec_length = read_file_size(channel_codec_path) - (channel_codec_header + repeat_length * source_codec_header)
 
     # 噪声
     error_rate = case['error_rate']
     noise_csv_path = os.path.join(data_dir, 'BSC.p=%.3f.csv' % error_rate)
     noise_path = os.path.join(data_dir, 'BSC.p=%.3f.len=%d.dat' % (error_rate, channel_codec_length))
-    subprocess.check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(error_rate, noise_csv_path))
-    subprocess.check_call(cmd_source + ' "{:s}" "{:s}" {:d} -p ({},0,0,0)'.format(noise_csv_path, noise_path, channel_codec_length, repeat_header_size))
+    check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(error_rate, noise_csv_path))
+    check_call(cmd_source + ' "{:s}" "{:s}" {:d} -p ({},0,0,0)'.format(
+        noise_csv_path, noise_path, channel_codec_length, (channel_codec_header + repeat_length * source_codec_header)))
     # 信道传输
     channel_path = os.path.join(data_dir, 'BSC.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
-    subprocess.check_call(cmd_channel + ' "{}" "{}" "{}"'.format(channel_codec_path, noise_path, channel_path))
+    check_call(cmd_channel + ' "{}" "{}" "{}"'.format(channel_codec_path, noise_path, channel_path))
 
     # 信道解码
     if case['channel_codec']:
         channel_decode_path = os.path.join(data_dir, 'RC.de.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
-        subprocess.check_call(cmd_codec_channel + ' decode "{}" "{}"'.format(channel_path, channel_decode_path))
+        check_call(cmd_codec_channel + ' decode "{}" "{}"'.format(channel_path, channel_decode_path))
     else:
         channel_decode_path = channel_path
     # 信源解码
     if case['source_codec']:
         source_decode_path = os.path.join(data_dir, 'HC.de.p0={:.3f}.p={:.3f}.dat'.format(case['prob0'], error_rate))
-        subprocess.check_call(cmd_codec_source + ' decode "{}" "{}"'.format(channel_decode_path, source_decode_path))
+        check_call(cmd_codec_source + ' decode "{}" "{}"'.format(channel_decode_path, source_decode_path))
     else:
         source_decode_path = channel_decode_path
 
-    # 统计实测数据
-    source_info_path = os.path.join(data_dir, 'DMS.info.csv')
-    channel_info_path = os.path.join(data_dir, 'BSC.info.csv')
-    channel_codec_info_path = os.path.join(data_dir, 'RC.info.csv')
-    source_codec_info_path = os.path.join(data_dir, 'HC.info.csv')
-    subprocess.check_call(cmd_calc_source + ' {} {}'.format(source_path, source_info_path))
-    subprocess.check_call(cmd_calc_codec_source + ' {} {}'.format(source_path, channel_codec_path, source_codec_info_path))
-    subprocess.check_call(cmd_calc_channel + ' {} {} {}'.format(channel_codec_path, channel_path, channel_info_path))
-    subprocess.check_call(cmd_calc_channel + ' {} {} {}'.format(channel_codec_path, channel_decode_path, channel_codec_info_path))
+    # 计算实测指标
+    source_pmf_path = os.path.join(data_dir, 'DMS.pmf.p0=%.3f.p=%.3f.csv' % (case['prob0'], error_rate))
+    check_call(cmd_calc_source + ' "{}" "{}" --export-p "{}"'.format(source_path, source_info_path, source_pmf_path))
+    check_call(cmd_calc_codec_source + ' "{}" "{}" "{}" -p {:d}'.format(
+        source_path, channel_codec_path, source_codec_info_path, source_codec_header))
+    check_call(cmd_calc_channel + ' "{}" "{}" "{}"'.format(
+        channel_codec_path, channel_path, channel_info_path))
+    check_call(cmd_calc_codec_channel + ' "{}" "{}" "{}" "{}"'.format(
+        source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path))
     # 理论计算和表格统计
-    theory_info_path = os.path.join(data_dir, 'results.csv')
-    subprocess.check_call(cmd_calc_theory + ' --p0 {:f} -p {:f} --LEN {:d} --SOURCE "{}" --SOURCE_CODEC "{}" --CHANNEL_CODEC "{}"'.format(
-        case['prob0'], error_rate, repeat_length, source_info_path, source_codec_info_path, channel_codec_info_path
+    check_call(cmd_calc_theory + ' --p1 {:f} -p {:f} --rs {:f} --LEN {:d}'
+                                 ' --SOURCE "{}" --SOURCE_CODEC "{}" --CHANNEL_CODEC "{}"'.format(
+        prob1, error_rate, rs, repeat_length, source_info_path, source_codec_info_path, channel_codec_info_path
     ))
-
-subprocess.call('@echo:>>"%s"' % os.path.join(data_dir, 'results.csv'))
 

@@ -6,7 +6,9 @@
 3.1.	待测指标的理论值推导
 输入
     二元信源分布概率P(1)
+    二元对称信道错误传输概率p
     信源的数据率rs
+    重复编码重复次数
     二元DMS信源输出文件
     信源编码输出文件
     信道编码输出文件
@@ -22,6 +24,20 @@
 	    信道的输出信息率Rco（信息比特/秒）
 	    信宿关于信源的信息率RI（信息比特/秒）
 	    信宿的误码率er
+    if export:
+        p0 = float(x_file_name[x_file_name.index('p0=')+len('p0='): x_file_name.index('.csv')])
+        p = float(y_file_name[y_file_name.index('p=')+len('p='): y_file_name.index('.DMS')])
+        H_x = calc_H_p([1-p0, p0])
+        p_y = (1-p0)*p + p0*(1-p)
+        H_y = calc_H_p([1-p_y, p_y])
+        joint_p_xy = [(1-p0)*(1-p), (1-p0)*p, p0*(1-p), p0*p]
+        joint_H_xy = calc_H_p(joint_p_xy)
+        # joint_H_xy = H_x + calc_H_p([1-p, p])
+        cond_H_xy = joint_H_xy - H_y
+        cond_H_yx = joint_H_xy - H_x
+        I_xy = H_x + H_y - joint_H_xy
+        p_BSC = p
+        write_results(export, [x_file_name, y_file_name, H_x, H_y, joint_H_xy, cond_H_xy, cond_H_yx, I_xy, p_BSC])
 
 """
 __version__ = '1.0'
@@ -196,18 +212,18 @@ def parse_sys_args() -> dict:
     )
 
 
-if __name__ == "__main__":
-    kwgs = parse_sys_args()
-
-    if kwgs['show_version']:
-        print(__version__)
-
-    if kwgs['test_flow']:
-        test_workflow()
-
-    if kwgs['base_path']:
-        if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):
-            raise RuntimeError("base-path must be an exist folder.")
-
-    if kwgs['input_path'] and kwgs['output_path']:
-        main(**kwgs)
+# if __name__ == "__main__":
+#     kwgs = parse_sys_args()
+#
+#     if kwgs['show_version']:
+#         print(__version__)
+#
+#     if kwgs['test_flow']:
+#         test_workflow()
+#
+#     if kwgs['base_path']:
+#         if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):
+#             raise RuntimeError("base-path must be an exist folder.")
+#
+#     if kwgs['input_path'] and kwgs['output_path']:
+#         main(**kwgs)
