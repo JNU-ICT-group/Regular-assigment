@@ -41,98 +41,130 @@ __version__ = "20241212.2220"
 
 def main():
     parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
-    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
 
-    parser.add_argument('INPUT1', type=str, nargs='?', help='path to input file 1')
-    parser.add_argument('INPUT2', type=str, nargs='?', help='path to input file 2')
+    parser.add_argument('SOURCE', type=str, help='path to input file 1 (before encoding)')
+    parser.add_argument('ENCODE', type=str, help='path to input file 2 (after encoding)')
+    parser.add_argument('DECODE', type=str, help='path to input file 3 (after decoding)')
     parser.add_argument('RESULT', type=str, nargs='?', help='path to the result CSV file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
-
-    # thory sub-command
-    parser_calc = subparsers.add_parser('calc', help='calculate a thory case.')
-    parser_calc.add_argument('LEN_CODE', type=int, help='Code Repeats.')
-    parser_calc.add_argument('ERROR', type=float, help='Transmission error rate.')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
 
     args = parser.parse_args()
     if args.test:
         return test()
 
-    if args.command == 'calc':
-        Pe = theoryCalcError(args.LEN_CODE, args.ERROR)
-        print("Theory Error-Rate: %.8f" % Pe)
-        return Pe
+    SOURCE = path_split(args.SOURCE)
+    ENCODE = path_split(args.ENCODE)
+    DECODE = path_split(args.DECODE)
 
-    INPUT1 = path_split(args.INPUT1)
-    INPUT2 = path_split(args.INPUT2)
-
-    for file1_path, file2_path in zip(INPUT1, INPUT2):
-        print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(file1_path), os.path.basename(file2_path)))
-        compare_file(file1_path, file2_path, args.RESULT)
-        print('')
+    for source_path, encode_path, decode_path in zip(SOURCE, ENCODE, DECODE):
+        if args.verbose:
+            print(f'Comparing source "{os.path.basename(source_path)}", encoded "{os.path.basename(encode_path)}", and decoded "{os.path.basename(decode_path)}" ...')
+        compare_files(source_path, encode_path, decode_path, args.RESULT, args.verbose)
+        if args.verbose:
+            print('')
 
 
 def path_split(path):
     return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
-# 文件比较函数，比较两个文件的差异
-def compare_file(file1_path, file2_path, result_path):
+def compare_files(source_path, encode_path, decode_path, result_path, verbose=False):
     """
-    计算重复编码文件的误码率，并将结果保存到 CSV 文件。
+    计算误码率，压缩比和信源信息传输率，并将结果保存到 CSV 文件。
 
-    file1_path: str, 输入文件 1 的路径
-    file2_path: str, 输入文件 2 的路径
-    result_path: str, 结果保存的 CSV 文件路径
+    source_path: 原始文件路径
+    encode_path: 编码文件路径
+    decode_path: 解码文件路径
+    result_path: 结果保存的 CSV 文件路径
     """
+
     # 检查文件是否存在
-    if not os.path.exists(file1_path) or not os.path.exists(file2_path):
+    if not os.path.exists(source_path) or not os.path.exists(encode_path) or not os.path.exists(decode_path):
         raise FileNotFoundError("文件路径错误，文件不存在")
 
-    data1 = np.fromfile(file1_path, dtype='uint8')  # 读取第一个文件的数据
-    data2 = np.fromfile(file2_path, dtype='uint8')  # 读取第二个文件的数据
+    source = np.fromfile(source_path, dtype='uint8')  # 读取原始文件数据
+    encoded = np.fromfile(encode_path, dtype='uint8')  # 读取编码后的文件数据
+    decoded = np.fromfile(decode_path, dtype='uint8')  # 读取解码后的文件数据
 
-    compare_size = min(data1.size, data2.size)  # 取较小的文件大小作为比较大小
-    if data1.size != data2.size:  # 如果文件大小不同，输出警告
-        print('[WARNING] These two files have different sizes (in bytes): %d vs %d' % (data1.size, data2.size))
-        print('          Comparing the first %d bytes only.' % (compare_size))
+    compare_size = min(len(source), len(decoded))  # 取较小的文件大小作为比较大小
 
-    # 比较两个文件的数据，统计不同的字节数
-    if compare_size == 0:
-        print('[WARNING] These two files have least one Empty.')
-        diff_total = 0
-        error_rate = 0.0
-    else:
-        diff_total = np.unpackbits(data1[:compare_size] ^ data2[:compare_size]).sum()  # 统计不同字节的总数
-        error_rate = diff_total / (compare_size * 8)
+    if len(source) != len(decoded):
+        print(f'[WARNING] These files have different sizes: {len(source)} (original), {len(decoded)} (decoded)')
+        print(f'Comparing the first {compare_size} bytes only.')
 
+    # 计算汉明误码率
+    diff_total = np.unpackbits(source[:compare_size] ^ decoded[:compare_size]).sum()  # 统计不同的比特数
+    error_rate = diff_total / (compare_size * 8)
+
+    # 计算压缩比（编码前字节数 / 编码后字节数）
+    compression_ratio = len(source) / len(encoded) if len(encoded) > 0 else 0
+
+    # 计算编码前信源信息传输率（信息比特/字节）
+    source_entropy = calc_entropy(calc_probability(source))
+    source_rate = source_entropy / 8  # 比特/字节
+
+    # 计算编码后信源信息传输率（信息比特/字节）
+    encoded_entropy = calc_entropy(calc_probability(encoded))
+    encoded_rate = encoded_entropy / 8  # 比特/字节
+
+    if not os.path.isfile(result_path):
+        with open(result_path, 'a', newline='') as result_file:
+            result_file.write('"X(source)","Y(encoded)","Z(decoded)","compression ratio","error rate","Rs(X)bit/byte","Rs(Y)bit/byte"\n')
     # 保存结果到 CSV 文件
     with open(result_path, 'a', newline='') as result_file:
         writer = csv.writer(result_file)
         # 写入 CSV 内容
-        writer.writerow([file1_path, file2_path, error_rate])
+        writer.writerow([source_path, encode_path, decode_path, compression_ratio, error_rate, source_rate, encoded_rate])
 
-    print('Total %d bytes are different.' % (diff_total))
+    if verbose:
+        print(f'Total {diff_total} bits are different.')
+        print(f'Compression Ratio: {compression_ratio:.4f}')
+        print(f'Error Rate: {error_rate:.8f}')
+        print(f'Source Transmission Rate (before encoding): {source_rate:.6f} bits/byte')
+        print(f'Encoded Transmission Rate (after encoding): {encoded_rate:.6f} bits/byte')
 
-    return diff_total
+
+def calc_probability(data):
+    """计算每个字节的概率分布"""
+    file_size = len(data)
+    byte_counts = np.histogram(data, bins=range(256))[0]
+    probability = byte_counts / file_size
+    return probability
+
+
+def calc_information(p):
+    """计算每个字节的信息量（单位：比特）"""
+    p = p.copy()
+    np.clip(p, np.spacing(1), None, out=p)
+    information = - np.log2(p, out=p)
+    return information
+
+
+def calc_entropy(p):
+    """计算信息熵"""
+    entropy = (p * calc_information(p)).sum()
+    return entropy
 
 
 def binomialCoef(n, k):
     a = 1
-    for i in range(k+1, n+1): a *= i
+    for i in range(k + 1, n + 1):
+        a *= i
     b = math.factorial(n - k)
     return a / b
 
 
 def theoryCalcError(n, p):
-    if p<0. or p>1.:
-        raise ValueError("error_rate of BSC must between 0.&1.")
+    """计算理论误码率"""
+    if p < 0. or p > 1.:
+        raise ValueError("Error rate of BSC must be between 0 & 1.")
     if not isinstance(n, int) or n < 1 or (n % 2 == 0):
-        raise ValueError("Repeats must positive prime number.")
+        raise ValueError("Repeats must be a positive odd number.")
     Pe = 0.
-    for k in range((n+1)//2, n+1):
+    for k in range((n + 1) // 2, n + 1):
         bc = binomialCoef(n, k)
-        # print(n, k, bc)
         Pe += bc * pow(p, k) * pow(1 - p, (n - k))
     return Pe
 
@@ -143,6 +175,5 @@ def test():
     unittest.main(calcErrorRateTest, argv=['calcErrorRateTest'])
 
 
-# 主程序入口
 if __name__ == '__main__':
     main()

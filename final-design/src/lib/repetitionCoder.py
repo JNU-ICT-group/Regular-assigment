@@ -42,6 +42,7 @@ def main():
     parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
 
     args = parser.parse_args()
     if args.test:
@@ -53,18 +54,22 @@ def main():
     # Execute based on sub-command
     if args.command == 'encode':
         for INPUT, OUTPUT in zip(INPUT, OUTPUT):
-            print('Encoding %s (repeats=%d) ...' % (os.path.basename(INPUT), args.LEN))
+            if args.verbose:
+                print('Encoding %s (repeats=%d) ...' % (os.path.basename(INPUT), args.LEN))
             (source_len, encoded_len) = encode(args.LEN, INPUT, OUTPUT)
-            print(f'\t Source len: {source_len} B')
-            print(f'\tEncoded len: {encoded_len} B')
-            print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
+            if args.verbose:
+                print(f'\t Source len: {source_len} B')
+                print(f'\tEncoded len: {encoded_len} B')
+                print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
 
     elif args.command == 'decode':
         for INPUT, OUTPUT in zip(INPUT, OUTPUT):
-            print('Decoding %s ...' % os.path.basename(INPUT))
+            if args.verbose:
+                print('Decoding %s ...' % os.path.basename(INPUT))
             (encoded_len, decoded_len) = decode(INPUT, OUTPUT)
-            print(f'\tEncoded len: {encoded_len} B')
-            print(f'\tDecoded len: {decoded_len} B')
+            if args.verbose:
+                print(f'\tEncoded len: {encoded_len} B')
+                print(f'\tDecoded len: {decoded_len} B')
 
     else:
         parser.print_help()

@@ -1,4 +1,4 @@
-import lib.source_code.dahuffman as dahuffman
+import dahuffman as dahuffman
 
 
 class HuffmanCodec(dahuffman.HuffmanCodec):

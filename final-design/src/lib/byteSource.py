@@ -3,8 +3,10 @@
 """
 生成任意指定概率分布和长度的符号序列.
 限制最大为256进制。
+
+v1.3 增加padding功能
 """
-__version__ = '1.1'
+__version__ = '1.3'
 
 import os
 import argparse
@@ -13,54 +15,43 @@ import csv
 
 
 def main(input_path, output_path, msg_length, **kwgs):
+    input_paths = path_split(input_path)
+    output_paths = path_split(output_path)
+
+    for (input_path, output_path) in zip(input_paths, output_paths):
+        if kwgs['message_state']:
+            print('Processing "%s" ...' % input_path)
+        work_flow(input_path, output_path, msg_length, **kwgs)
+
+
+def work_flow(input_path, output_path, msg_length, **kwgs):
     if kwgs.get('base_path'):
         input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
     if kwgs['message_state'] == 1:
         print('Input path:', input_path)
         print('Output path:', output_path)
-    if not os.path.exists(input_path):
-        raise RuntimeError("input_path must be an exist folder or file.")
+    if not os.path.isfile(input_path):
+        raise RuntimeError("input_path must be an exist file.")
     if os.path.exists(output_path) and not os.path.isfile(output_path):
         raise RuntimeError("output_path must be a file, not a folder.")
 
-    if os.path.isfile(input_path):
-        in_files = iter([input_path])
-    else:
-        in_files = spand_files(input_path, kwgs['depth'])
-
     if msg_length<=0:
         raise ValueError("Message length must be a positive number.")
-    for in_file in in_files:
-        if in_file == output_path:
-            continue
-        if kwgs['message_state']:
-            print('Processing "%s" ...' % in_file)
 
-        symbol_prob = read_input(in_file)          # do work for one single file `in_file`
-        msg = random_sequence(symbol_prob, msg_length)
+    symbol_prob = read_input(input_path)          # do work for one single file `in_file`
+    msg = random_sequence(symbol_prob, msg_length)
+    pad_left, v1, pad_right, v2 = kwgs['pad']
+    if pad_left or pad_right:
+        msg = np.pad(msg, (pad_left, pad_right), constant_values=(v1, v2))
 
-        if kwgs['message_state'] == 1:
-            print()
-        write_output(output_path, msg)
+    if kwgs['message_state'] == 1:
+        print()
+    write_output(output_path, msg)
 
 
-def spand_files(root, depth):
-    """
-    walk root directory and return files step by step.
-    """
-    roots = [root]
-    roots_next = []
-    for i in range(depth):
-        for root in roots:
-            base_path, dirs, files = next(os.walk(root))
-            for file in files:
-                yield os.path.join(base_path, file)
-            roots_next.extend(dirs)
-            dirs.clear()
-
-        roots, roots_next = roots_next, roots
-        roots_next.clear()
+def path_split(path):
+    return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
 def read_input(input_path) -> np.ndarray:
@@ -128,16 +119,17 @@ def parse_sys_args() -> dict:
     Parse command line arguments using argparse and return a dictionary of arguments.
     """
     parser = argparse.ArgumentParser(description="Process some commands for calcInfo.")
-    parser.add_argument('input_path', nargs='?', help='Input file path')
-    parser.add_argument('output_path', nargs='?', help='Output file path')
-    parser.add_argument('msg_length', type=int, default=0, nargs='?', help='Real Size of Sequence.')
+    parser.add_argument('input_path', help='Input file path')
+    parser.add_argument('output_path', help='Output file path')
+    parser.add_argument('msg_length', type=int, help='Real Size of Sequence.')
+    parser.add_argument('-p', type=lambda string: tuple(map(int, string[1:-1].split(','))), default=(0,0,0,0), help='Padding the two side with a const value, '
+                        'like (pad-left,bool,pad-right,bool).')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
     parser.add_argument('--depth', type=int, default=1, help='Folder traversal depth (default: 1)')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
     parser.add_argument('-S', action='store_true', help='Weak prompt output')
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('-v', '--version', action='store_true', help='Show version information')
-    parser.add_argument('--export-p', type=str, help='Probability information output path')
 
     args = parser.parse_args()
 
@@ -145,13 +137,13 @@ def parse_sys_args() -> dict:
         input_path=args.input_path,
         output_path=args.output_path,
         base_path=args.dir,
+        pad=args.p,
         show_help=False,
         show_version=args.version,
         test_flow=args.test,
         message_state=1 if args.O else 2 if args.S else 0,
         depth=args.depth,
         msg_length=args.msg_length,
-        export_p=args.export_p,
     )
 
 

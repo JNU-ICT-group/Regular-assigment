@@ -1,0 +1,253 @@
+D:\python\python.exe D:/work/旧作业/xxl/final-design/src/main.py
+Encoding DMS.p0=0.100.dat (PMF=DMS.p0=0.100.csv) ...
+	 Source len: 102400 B
+	Encoded len: 48661 B
+	Compression ratio: 2.1044
+Processing INPUT "..\data\HC.en.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.000.dat" with NOISE "..\data\BSC.p=0.000.len=46495.dat"...
+	Input path: ..\data\HC.en.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.000.dat
+
+Decoding BSC.p0=0.100.p=0.000.dat ...
+	Encoded len: 48661 B
+	Decoded len: 102400 B
+Computation Time: 0.03175 sec
+  BSC input  (X): 49744 bytes, "..\data\HC.en.p0=0.100.dat"
+  BSC output (Y): 49744 bytes, "..\data\BSC.p0=0.100.p=0.000.dat"
+  H(X) = 0.9916772304472702 bit/bit, p(x=0) = 0.454255789642972
+  H(Y) = 0.9916772304472702 bit/bit, p(y=0) = 0.454255789642972
+ H(XY) = 0.9916772304472702 bit/2-bit
+H(X|Y) = 0.0 bit/bit
+H(Y|X) = 0.0 bit/bit
+I(X;Y) = 0.9916772304472702 bit/bit
+(BSC)p = 0.0
+Comparing source "HC.en.p0=0.100.dat", encoded "HC.en.p0=0.100.dat", and decoded "BSC.p0=0.100.p=0.000.dat" ...
+Total 0 bits are different.
+Compression Ratio: 1.0000
+Error Rate: 0.00000000
+Source Transmission Rate (before encoding): 0.989818 bits/byte
+Encoded Transmission Rate (after encoding): 0.989818 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded= 48661B, av-Code-Len=3.801641bit/byte
+
+Processing INPUT "..\data\DMS.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.000.dat" with NOISE "..\data\BSC.p=0.000.len=102400.dat"...
+	Input path: ..\data\DMS.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.000.dat
+
+Computation Time: 0.02418 sec
+  BSC input  (X): 102400 bytes, "..\data\DMS.p0=0.100.dat"
+  BSC output (Y): 102400 bytes, "..\data\BSC.p0=0.100.p=0.000.dat"
+  H(X) = 0.4704785458901124 bit/bit, p(x=0) = 0.10053100585937502
+  H(Y) = 0.4704785458901124 bit/bit, p(y=0) = 0.10053100585937502
+ H(XY) = 0.47047854589011234 bit/2-bit
+H(X|Y) = 0.0 bit/bit
+H(Y|X) = 0.0 bit/bit
+I(X;Y) = 0.4704785458901124 bit/bit
+(BSC)p = 0.0
+Comparing source "DMS.p0=0.100.dat", encoded "DMS.p0=0.100.dat", and decoded "BSC.p0=0.100.p=0.000.dat" ...
+Total 0 bits are different.
+Compression Ratio: 1.0000
+Error Rate: 0.00000000
+Source Transmission Rate (before encoding): 0.442529 bits/byte
+Encoded Transmission Rate (after encoding): 0.442529 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded=102400B, av-Code-Len=8.000000bit/byte
+
+Encoding DMS.p0=0.500.dat (repeats=3) ...
+	 Source len: 102400 B
+	Encoded len: 307195 B
+	Compression ratio: 0.3333
+Processing INPUT "..\data\RC.en.p0=0.500.dat" OUTPUT "..\data\BSC.p0=0.500.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=307200.dat"...
+	Input path: ..\data\RC.en.p0=0.500.dat
+	Output path: ..\data\BSC.p0=0.500.p=0.010.dat
+
+Decoding BSC.p0=0.500.p=0.010.dat ...
+	Encoded len: 307200 B
+	Decoded len: 102400 B
+Computation Time: 0.04363 sec
+  BSC input  (X): 307205 bytes, "..\data\RC.en.p0=0.500.dat"
+  BSC output (Y): 307205 bytes, "..\data\BSC.p0=0.500.p=0.010.dat"
+  H(X) = 0.5750583013379142 bit/bit, p(x=0) = 0.5000720203121694
+  H(Y) = 0.6339148617014844 bit/bit, p(y=0) = 0.4999930827948764
+ H(XY) = 0.6556581972898541 bit/2-bit
+H(X|Y) = 0.021743335588369703 bit/bit
+H(Y|X) = 0.08059989595193988 bit/bit
+I(X;Y) = 0.5533149657495445 bit/bit
+(BSC)p = 0.010026692273888771
+Comparing source "DMS.p0=0.500.dat", encoded "RC.en.p0=0.500.dat", and decoded "RC.de.p0=0.500.p=0.010.dat" ...
+Total 248 bits are different.
+Compression Ratio: 0.3333
+Error Rate: 0.00030273
+Source Transmission Rate (before encoding): 0.998791 bits/byte
+Encoded Transmission Rate (after encoding): 0.564838 bits/byte
+
+Processing "..\data\DMS.p0=0.500.dat" ...
+Input path: ..\data\DMS.p0=0.500.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded=102400B, av-Code-Len=8.000000bit/byte
+
+Processing INPUT "..\data\DMS.p0=0.500.dat" OUTPUT "..\data\BSC.p0=0.500.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=102400.dat"...
+	Input path: ..\data\DMS.p0=0.500.dat
+	Output path: ..\data\BSC.p0=0.500.p=0.010.dat
+
+Computation Time: 0.02384 sec
+  BSC input  (X): 102400 bytes, "..\data\DMS.p0=0.500.dat"
+  BSC output (Y): 102400 bytes, "..\data\BSC.p0=0.500.p=0.010.dat"
+  H(X) = 0.9997898612772207 bit/bit, p(x=0) = 0.50020263671875
+  H(Y) = 0.9997946743507529 bit/bit, p(y=0) = 0.500263671875
+ H(XY) = 1.077488033775457 bit/2-bit
+H(X|Y) = 0.07769335942470411 bit/bit
+H(Y|X) = 0.07769817249823631 bit/bit
+I(X;Y) = 0.9220965018525166 bit/bit
+(BSC)p = 0.010068359375
+Comparing source "DMS.p0=0.500.dat", encoded "DMS.p0=0.500.dat", and decoded "BSC.p0=0.500.p=0.010.dat" ...
+Total 8248 bits are different.
+Compression Ratio: 1.0000
+Error Rate: 0.01006836
+Source Transmission Rate (before encoding): 0.998785 bits/byte
+Encoded Transmission Rate (after encoding): 0.998785 bits/byte
+
+Processing "..\data\DMS.p0=0.500.dat" ...
+Input path: ..\data\DMS.p0=0.500.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded=102400B, av-Code-Len=8.000000bit/byte
+
+Encoding DMS.p0=0.100.dat (PMF=DMS.p0=0.100.csv) ...
+	 Source len: 102400 B
+	Encoded len: 48636 B
+	Compression ratio: 2.1054
+Encoding HC.en.p0=0.100.dat (repeats=3) ...
+	 Source len: 49719 B
+	Encoded len: 149152 B
+	Compression ratio: 0.3333
+Processing INPUT "..\data\RC.en.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=145908.dat"...
+	Input path: ..\data\RC.en.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.010.dat
+
+Decoding BSC.p0=0.100.p=0.010.dat ...
+	Encoded len: 149157 B
+	Decoded len: 49719 B
+Decoding RC.de.p0=0.100.p=0.010.dat ...
+	Encoded len: 48636 B
+	Decoded len: 102400 B
+Computation Time: 0.02373 sec
+  BSC input  (X): 149162 bytes, "..\data\RC.en.p0=0.100.dat"
+  BSC output (Y): 149162 bytes, "..\data\BSC.p0=0.100.p=0.010.dat"
+  H(X) = 0.569882942702584 bit/bit, p(x=0) = 0.45323959855727325
+  H(Y) = 0.6271065917716442 bit/bit, p(y=0) = 0.4545921548383637
+ H(XY) = 0.6485812914645543 bit/2-bit
+H(X|Y) = 0.021474699692910076 bit/bit
+H(Y|X) = 0.07869834876197035 bit/bit
+I(X;Y) = 0.548408243009674 bit/bit
+(BSC)p = 0.009789691744546199
+Comparing source "HC.en.p0=0.100.dat", encoded "RC.en.p0=0.100.dat", and decoded "RC.de.p0=0.100.p=0.010.dat" ...
+Total 119 bits are different.
+Compression Ratio: 0.3333
+Error Rate: 0.00029918
+Source Transmission Rate (before encoding): 0.989772 bits/byte
+Encoded Transmission Rate (after encoding): 0.556991 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded= 48636B, av-Code-Len=3.799688bit/byte
+
+Encoding DMS.p0=0.100.dat (PMF=DMS.p0=0.100.csv) ...
+	 Source len: 102400 B
+	Encoded len: 48597 B
+	Compression ratio: 2.1071
+Processing INPUT "..\data\HC.en.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=46431.dat"...
+	Input path: ..\data\HC.en.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.010.dat
+
+Decoding BSC.p0=0.100.p=0.010.dat ...
+	Encoded len: 48597 B
+	Decoded len: 102400 B
+Computation Time: 0.01330 sec
+  BSC input  (X): 49680 bytes, "..\data\HC.en.p0=0.100.dat"
+  BSC output (Y): 49680 bytes, "..\data\BSC.p0=0.100.p=0.010.dat"
+  H(X) = 0.9914936509074509 bit/bit, p(x=0) = 0.4531174516908213
+  H(Y) = 0.9918852886278424 bit/bit, p(y=0) = 0.4540735708534621
+ H(XY) = 1.0618975368896535 bit/2-bit
+H(X|Y) = 0.07001224826181071 bit/bit
+H(Y|X) = 0.0704038859822022 bit/bit
+I(X;Y) = 0.9214814026456402 bit/bit
+(BSC)p = 0.009349838969404186
+Comparing source "HC.en.p0=0.100.dat", encoded "HC.en.p0=0.100.dat", and decoded "BSC.p0=0.100.p=0.010.dat" ...
+Total 3716 bits are different.
+Compression Ratio: 1.0000
+Error Rate: 0.00934984
+Source Transmission Rate (before encoding): 0.989644 bits/byte
+Encoded Transmission Rate (after encoding): 0.989644 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded= 48597B, av-Code-Len=3.796641bit/byte
+
+Encoding DMS.p0=0.100.dat (repeats=3) ...
+	 Source len: 102400 B
+	Encoded len: 307195 B
+	Compression ratio: 0.3333
+Processing INPUT "..\data\RC.en.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=307200.dat"...
+	Input path: ..\data\RC.en.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.010.dat
+
+Decoding BSC.p0=0.100.p=0.010.dat ...
+	Encoded len: 307200 B
+	Decoded len: 102400 B
+Computation Time: 0.02951 sec
+  BSC input  (X): 307205 bytes, "..\data\RC.en.p0=0.100.dat"
+  BSC output (Y): 307205 bytes, "..\data\BSC.p0=0.100.p=0.010.dat"
+  H(X) = 0.25408956449403597 bit/bit, p(x=0) = 0.10000651031070462
+  H(Y) = 0.3227833839330111 bit/bit, p(y=0) = 0.10812608844257088
+ H(XY) = 0.335772774343667 bit/2-bit
+H(X|Y) = 0.01298939041065594 bit/bit
+H(Y|X) = 0.08168320984963104 bit/bit
+I(X;Y) = 0.24110017408338003 bit/bit
+(BSC)p = 0.010172767370322749
+Comparing source "DMS.p0=0.100.dat", encoded "RC.en.p0=0.100.dat", and decoded "RC.de.p0=0.100.p=0.010.dat" ...
+Total 272 bits are different.
+Compression Ratio: 0.3333
+Error Rate: 0.00033203
+Source Transmission Rate (before encoding): 0.440826 bits/byte
+Encoded Transmission Rate (after encoding): 0.234783 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded=102400B, av-Code-Len=8.000000bit/byte
+
+Processing INPUT "..\data\DMS.p0=0.100.dat" OUTPUT "..\data\BSC.p0=0.100.p=0.010.dat" with NOISE "..\data\BSC.p=0.010.len=102400.dat"...
+	Input path: ..\data\DMS.p0=0.100.dat
+	Output path: ..\data\BSC.p0=0.100.p=0.010.dat
+
+Computation Time: 0.01900 sec
+  BSC input  (X): 102400 bytes, "..\data\DMS.p0=0.100.dat"
+  BSC output (Y): 102400 bytes, "..\data\BSC.p0=0.100.p=0.010.dat"
+  H(X) = 0.46813940223319905 bit/bit, p(x=0) = 0.09979614257812497
+  H(Y) = 0.4928262819081638 bit/bit, p(y=0) = 0.10774047851562496
+ H(XY) = 0.5470897592749913 bit/2-bit
+H(X|Y) = 0.054263477366827434 bit/bit
+H(Y|X) = 0.07895035704179215 bit/bit
+I(X;Y) = 0.4138759248663716 bit/bit
+(BSC)p = 0.0099462890625
+Comparing source "DMS.p0=0.100.dat", encoded "DMS.p0=0.100.dat", and decoded "BSC.p0=0.100.p=0.010.dat" ...
+Total 8148 bits are different.
+Compression Ratio: 1.0000
+Error Rate: 0.00994629
+Source Transmission Rate (before encoding): 0.440092 bits/byte
+Encoded Transmission Rate (after encoding): 0.440092 bits/byte
+
+Processing "..\data\DMS.p0=0.100.dat" ...
+Input path: ..\data\DMS.p0=0.100.dat
+Output path: ..\data\HC.info.csv
+	FileSize=102400B, Encoded=102400B, av-Code-Len=8.000000bit/byte
+
+
+Process finished with exit code 0

@@ -2,4 +2,5 @@
 _tmp.*
 DMS.*.dat
 DMS.*.csv
-RC.*.dat
+*.csv.dat
+*.PDF.csv
