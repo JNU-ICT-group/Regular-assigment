@@ -129,7 +129,7 @@ def compute_info(arr, x_size) -> (np.ndarray, (float, float, float)):
     probability = calc_probability(arr[:x_size])
     # 计算信息熵
     prob0 = calc_prob0(probability)
-    entropy = calc_entropy(probability)
+    entropy = calc_entropy(probability) / 8
     redundancy = calc_redundancy(prob0)
 
     return probability, (prob0, entropy, redundancy)
@@ -138,7 +138,7 @@ def compute_info(arr, x_size) -> (np.ndarray, (float, float, float)):
 def write_output(out_file_name, in_file_name, info, x_size):
     if not os.path.isfile(out_file_name):
         out_file = open(out_file_name, 'w', newline='', encoding='utf-8')
-        out_file.write('"X(source)","P(0)","H(X)","冗余度","msg length"\n')
+        out_file.write('"X(source)","P(0)","H(X)","redundancy","msg length"\n')
     else:
         out_file = open(out_file_name, 'a', newline='', encoding='utf-8')
     with out_file:
