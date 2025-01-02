@@ -1,3 +1,4 @@
+/__pycache__/
 _tmp.*
 DMS.p0=*.dat
 DMS.*.csv

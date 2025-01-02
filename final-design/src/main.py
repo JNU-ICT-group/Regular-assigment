@@ -97,9 +97,11 @@ for i,case in enumerate(cases):
     if case['source_codec']:
         source_codec_path = os.path.join(data_dir, 'HC.en.p0={:.3f}.dat'.format(case['prob0']))
         check_call(cmd_codec_source + ' -v encode "{}" "{}" "{}"'.format(source_csv_path, source_path, source_codec_path))
+        source_codec_header_path = source_codec_path
         source_codec_header = read_header_size(source_codec_path)
     else:
         source_codec_path = source_path
+        source_codec_header_path = ''
         source_codec_header = 0
     # 信道编码
     if case['channel_codec']:
@@ -145,8 +147,9 @@ for i,case in enumerate(cases):
     check_call(cmd_calc_codec_source + ' "{}" "{}" "{}" -p {:d} -O'.format(
         source_path, source_codec_path, source_codec_info_path, source_codec_header))
     # 理论计算和表格统计
-    check_call(cmd_calc_theory + ' --p1 {:f} -p {:f} --rs {:f} --LEN {:d}'
+    check_call(cmd_calc_theory + ' --p0 {:f} -p {:f} --rs {:f} --HEADER "{}" --LEN {:d}'
                                  ' --SOURCE "{}" --SOURCE_CODEC "{}" --CHANNEL_CODEC "{}"'.format(
-        prob1, error_rate, rs, repeat_length, source_info_path, source_codec_info_path, channel_codec_info_path
+        case['prob0'], error_rate, rs, source_codec_header_path, repeat_length,
+        source_info_path, source_codec_info_path, channel_codec_info_path
     ))
 

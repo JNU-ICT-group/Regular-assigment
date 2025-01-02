@@ -41,7 +41,7 @@ def work_flow(input_path, output_path, msg_length, **kwgs):
 
     symbol_prob = read_input(input_path)          # do work for one single file `in_file`
     msg = random_sequence(symbol_prob, msg_length)
-    pad_left, v1, pad_right, v2 = kwgs['pad']
+    pad_left, v1, pad_right, v2 = kwgs.get('pad', (0,0,0,0))
     if pad_left or pad_right:
         msg = np.pad(msg, (pad_left, pad_right), constant_values=(v1, v2))
 

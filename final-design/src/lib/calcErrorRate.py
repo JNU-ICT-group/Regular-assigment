@@ -102,12 +102,10 @@ def compare_files(source_path, encode_path, decode_path, result_path, verbose=Fa
     compression_ratio = len(source) / len(encoded) if len(encoded) > 0 else 0
 
     # 计算编码前信源信息传输率（信息比特/字节）
-    source_entropy = calc_entropy(calc_probability(source))
-    source_rate = source_entropy / 8  # 比特/字节
+    source_entropy = calc_entropy(calc_probability(source))     # 比特/字节
 
     # 计算编码后信源信息传输率（信息比特/字节）
-    encoded_entropy = calc_entropy(calc_probability(encoded))
-    encoded_rate = encoded_entropy / 8  # 比特/字节
+    encoded_entropy = calc_entropy(calc_probability(encoded))   # 比特/字节
 
     if not os.path.isfile(result_path):
         with open(result_path, 'a', newline='') as result_file:
@@ -116,14 +114,14 @@ def compare_files(source_path, encode_path, decode_path, result_path, verbose=Fa
     with open(result_path, 'a', newline='') as result_file:
         writer = csv.writer(result_file)
         # 写入 CSV 内容
-        writer.writerow([source_path, encode_path, decode_path, compression_ratio, error_rate, source_rate, encoded_rate])
+        writer.writerow([source_path, encode_path, decode_path, compression_ratio, error_rate, source_entropy, encoded_entropy])
 
     if verbose:
         print(f'Total {diff_total} bits are different.')
         print(f'Compression Ratio: {compression_ratio:.4f}')
         print(f'Error Rate: {error_rate:.8f}')
-        print(f'Source Transmission Rate (before encoding): {source_rate:.6f} bits/byte')
-        print(f'Encoded Transmission Rate (after encoding): {encoded_rate:.6f} bits/byte')
+        print(f'Source Transmission Rate (before encoding): {source_entropy:.6f} bits/byte')
+        print(f'Encoded Transmission Rate (after encoding): {encoded_entropy:.6f} bits/byte')
 
 
 def calc_probability(data):
