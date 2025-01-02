@@ -6,15 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f1cb45b7-11f2-4d4c-bfaa-10ce1405b642" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/final-design/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/doc/正文.docx" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/doc/正文.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/byteSource.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/byteSource.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/byteSourceTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/byteSourceTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/calcCodecInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/calcCodecInfo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/calcDMSInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/calcDMSInfo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/calcErrorRate.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/calcErrorRate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/lib/calcInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/lib/calcInfo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final-design/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/final-design/src/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

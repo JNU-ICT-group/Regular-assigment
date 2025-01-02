@@ -1,5 +1,5 @@
-.idea
-/__pycache__/
+/.idea/
+*/__pycache__/
 BSC.*.dat
 DMS.*.dat
 HC.*.dat
