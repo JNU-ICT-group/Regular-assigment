@@ -103,18 +103,20 @@ def compare_files(source_path, encode_path, decode_path, result_path, verbose=Fa
 
     # 计算编码前信源信息传输率（信息比特/字节）
     source_entropy = calc_entropy(calc_probability(source))     # 比特/字节
+    source_rate = source_entropy / 8 * 8                        # 定长
 
     # 计算编码后信源信息传输率（信息比特/字节）
     encoded_entropy = calc_entropy(calc_probability(encoded))   # 比特/字节
+    encoded_rate = encoded_entropy / len(encoded) * len(source) # 重复编码
 
     if not os.path.isfile(result_path):
         with open(result_path, 'a', newline='') as result_file:
-            result_file.write('"X(source)","Y(encoded)","Z(decoded)","compression ratio","error rate","Rs(X)bit/byte","Rs(Y)bit/byte"\n')
+            result_file.write('"X(source)","Y(encoded)","Z(decoded)","compression ratio","error rate","R(X)bit/byte","R(Y)bit/byte"\n')
     # 保存结果到 CSV 文件
     with open(result_path, 'a', newline='') as result_file:
-        writer = csv.writer(result_file)
+        writer = csv.writer(result_file, quoting=csv.QUOTE_ALL)
         # 写入 CSV 内容
-        writer.writerow([source_path, encode_path, decode_path, compression_ratio, error_rate, source_entropy, encoded_entropy])
+        writer.writerow([source_path, encode_path, decode_path, compression_ratio, error_rate, source_rate, encoded_rate])
 
     if verbose:
         print(f'Total {diff_total} bits are different.')

@@ -114,7 +114,7 @@ def calc_efficiency(ratio: float) -> float:
 def write_output(out_file_name, in_file_name, encode_file_name, info):
     if not os.path.isfile(out_file_name):
         out_file = open(out_file_name, 'w', newline='', encoding='utf-8')
-        out_file.write('"X(source)","Y(encoded)","compression ratio","L(avg code len)bit/byte","η(efficiency)%","H(X)","H(Y)"\n')
+        out_file.write('"X(source)","Y(encoded)","compression ratio","L(avg code len)bit/byte","η(efficiency)%","H(X)bit/byte","H(Y)bit/byte"\n')
     else:
         out_file = open(out_file_name, 'a', newline='', encoding='utf-8')
     with out_file:

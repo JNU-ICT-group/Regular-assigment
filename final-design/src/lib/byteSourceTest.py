@@ -35,25 +35,21 @@ def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=10):
         # 调用算法函数生成符号序列
         byteSource.main(temp_csv_path, temp_output_path, msg_len, message_state=0)
 
-        with open(temp_output_path, 'rb') as f:
-            arr = np.frombuffer(memoryview(f.read()), dtype=np.uint8)
-            p, info = calcDMSInfo.compute_info(arr, len(arr))
-            calcDMSInfo.write_export(temp_prob_path, p)
-
-        P = byteSource.read_input(temp_prob_path)
-        # 判断相对误差是否在可接受范围内
-        relative_error = np.abs(P - symbol_prob)
-        if not (relative_error <= 0.02).all():
-            print("relative errors:", relative_error)
-            return False
+        arr, x_size = calcDMSInfo.read_input(temp_output_path)
+        assert msg_len == x_size, 'Except to %d but %s' % (msg_len,x_size)
+        for i,p in enumerate(symbol_prob):
+            P = (arr == i).sum(dtype=np.uint32) / x_size
+            if abs(P - p) > 1e-2:
+                print("Error probability: except %.6f, but %.6f at symbol %d" % (p, P, i))
+                return False
 
         # 指标计算测试
         calcDMSInfo.main(temp_output_path, temp_info_path, export_p=temp_prob_path, message_state=0)
         with open(temp_prob_path) as f:
-            p = np.empty_like(P)
+            p = np.zeros_like(symbol_prob)
             for row in csv.reader(f):
                 p[int(row[0])] = float(row[1])
-        relative_error = np.abs(P - p)
+        relative_error = np.abs(symbol_prob - p)
         if not (relative_error <= 0.02).all():
             print("relative errors:", relative_error)
             return False
@@ -85,7 +81,7 @@ def test_flow():
     if quick_test(single_symbol_dist, 0.5, 1., 0.):
         print("Single symbol distribution test passed.")
     else:
-        # all_tests_passed = False
+        all_tests_passed = False
         print("Single symbol distribution test passed (nan).")
 
     # 均匀分布

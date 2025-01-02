@@ -111,9 +111,9 @@ def parse_sys_args() -> dict:
     Parse command line arguments using argparse and return a dictionary of arguments.
     """
     parser = argparse.ArgumentParser(description="Process some commands for calcInfo.")
-    parser.add_argument('-p0', type=float, help='Source probability.')
+    parser.add_argument('--p0', type=float, help='Source probability.')
     parser.add_argument('-p', type=float, help='Error transmission probability.')
-    parser.add_argument('--rs', type=float, dafult=1., help='Source data rate.')
+    parser.add_argument('--rs', type=float, default=1., help='Source data rate.')
     parser.add_argument('--HEADER', type=str, help='Source Codec header path.')
     parser.add_argument('--LEN', type=float, help='Channel Codec average code length (bit/byte).')
     parser.add_argument('OUTPUT', help='Output path.')
@@ -138,7 +138,6 @@ def parse_sys_args() -> dict:
         channel_codec_info=args.CHANNEL_CODEC,
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,
-        depth=args.depth,
     )
 
 
