@@ -150,8 +150,9 @@ for i,case in enumerate(cases):
     check_call(cmd_calc_source + ' "{}" "{}" --export-p "{}"'.format(source_path, source_info_path, source_pmf_path))
     check_call(cmd_calc_channel + ' "{}" "{}" "{}" -v'.format(
         channel_codec_path, channel_path, channel_info_path))
-    check_call(cmd_calc_codec_channel + ' "{}" "{}" "{}" "{}" -v'.format(
-        source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path))
+    check_call(cmd_calc_codec_channel + ' "{}" "{}" "{}" "{}" -v {}'.format(
+        source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path,
+        ('' if case['channel_codec'] else '--no-header')))
     check_call(cmd_calc_codec_source + ' "{}" "{}" "{}" -p {:d} -O'.format(
         source_path, source_codec_path, source_codec_info_path, source_codec_header))
     # 理论计算和表格统计
