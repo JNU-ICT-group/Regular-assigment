@@ -1,5 +1,9 @@
 import sys
 
+"""
+生成二进制数据概率分布
+"""
+
 bit_counts = bytearray(map(int.bit_count, range(256)))
 
 def main(ones, output_paths):

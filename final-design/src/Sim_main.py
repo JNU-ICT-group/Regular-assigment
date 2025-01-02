@@ -50,9 +50,9 @@ cases = [CASE_BASE(prob0=x[0], source_codec=x[1], channel_codec=x[2], error_rate
 # case7 = CASE_BASE(prob0=0.1, source_codec=False, channel_codec=True, error_rate=0.01)
 # case8 = CASE_BASE(prob0=0.1, source_codec=False, channel_codec=False, error_rate=0.01)
 
-# 获取当前 Python 解释器的路径
-# python_executable = sys.executable
+# 获取当前路径
 python_executable = ".\\"
+
 # 命令字典
 commands = {
     'source': os.path.join(python_executable, 'lib', 'IS','byteSource.py'),
