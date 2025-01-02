@@ -175,7 +175,7 @@ def write_results(out_file_name, data):
     if not Path(out_file_name).is_file():
         with open(out_file_name, 'w', newline='') as out_file:
             csvwriter = csv.writer(out_file, quoting=csv.QUOTE_ALL)
-            csvwriter.writerow(['X', 'Y', 'H(X)', 'H(Y)', 'H(XY)', 'H(X|Y)', 'H(Y|X)', 'I(X;Y)', 'p'])
+            csvwriter.writerow(['X', 'Y', 'H(X)bit/bit', 'H(Y)bit/bit', 'H(XY)bit/2-bit', 'H(X|Y)bit/bit', 'H(Y|X)bit/bit', 'I(X;Y)bit/bit', 'p'])
 
     with open(out_file_name, 'a', newline='') as out_file:
         csvwriter = csv.writer(out_file, quoting=csv.QUOTE_ALL)

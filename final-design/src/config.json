@@ -1,0 +1,27 @@
+{
+
+    "calc_source": "lib/calcDMSInfo.py",
+    "calc_channel": "lib/calcBSCInfo.py",
+    "calc_codec_channel": "lib/calcErrorRate.py",
+    "calc_codec_source": "lib/calcCodecInfo.py",
+    "calc_theory": "lib/calcInfo.py",
+  
+
+    "rs": 1.0,
+    "repeat_length": 3,
+    "source_codec_header": 0,
+
+  
+
+    "cases": [
+      { "prob0": 0.1, "source_codec": true,  "channel_codec": false, "error_rate": 0.0   },
+      { "prob0": 0.1, "source_codec": false, "channel_codec": false, "error_rate": 0.0   },
+      { "prob0": 0.5, "source_codec": false, "channel_codec": true,  "error_rate": 0.01  },
+      { "prob0": 0.5, "source_codec": false, "channel_codec": false, "error_rate": 0.01  },
+      { "prob0": 0.1, "source_codec": true,  "channel_codec": true,  "error_rate": 0.01  },
+      { "prob0": 0.1, "source_codec": true,  "channel_codec": false, "error_rate": 0.01  },
+      { "prob0": 0.1, "source_codec": false, "channel_codec": true,  "error_rate": 0.01  },
+      { "prob0": 0.1, "source_codec": false, "channel_codec": false, "error_rate": 0.01  }
+    ]
+  }
+  

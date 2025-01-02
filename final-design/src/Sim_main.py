@@ -1,25 +1,10 @@
-"""仿真主程序
-仿真场景
-序号      场景       信源概率分布	信源编码	信道编码	信道错误传递概率
-1       信源非理想	P(0)=0.1	有   	无	    0
-2       信源非理想	P(0)=0.1	无   	无	    0
-3       信道非理想	等概率	    无	    有       0.01
-4       信道非理想	等概率	    无	    无       0.01
-5       一般非理想	P(0)=0.1	有   	有	    0.01
-6       一般非理想	P(0)=0.1	有   	无	    0.01
-7       一般非理想	P(0)=0.1	无   	有	    0.01
-8       一般非理想	P(0)=0.1	无   	无	    0.01
-
-"""
-
+"""Simulation-main  仿真主程序"""
 
 import os
 import sys
-import shutil
 import subprocess
 from subprocess import check_call
 import typing
-
 
 class CASE_BASE(typing.TypedDict):
     prob0: float
@@ -27,23 +12,24 @@ class CASE_BASE(typing.TypedDict):
     channel_codec: bool
     error_rate: float
 
-cmd_source = r'python lib\byteSource.py '
-cmd_channel = r'python lib\byteChannel.py '
-cmd_DMS_create = r'python lib\generate.py '
-cmd_codec_source = r'python lib\byteSourceCoder.py '
-cmd_codec_channel = r'python lib\repetitionCoder.py '
-cmd_calc_source = r'python lib\calcDMSInfo.py '
-cmd_calc_channel = r'python lib\calcBSCInfo.py '
-cmd_calc_codec_source = r'python lib\calcCodecInfo.py '
-cmd_calc_codec_channel = r'python lib\calcErrorRate.py '
-cmd_calc_theory = r'python lib\calcInfo.py '
 msg_length = 102400
 repeat_length = 3
 repeat_header_size = 5
 rs = 1.0
-data_dir = '..\\data'
-case_dir = os.path.join(data_dir, 'case_{:d}')
 
+""""
+仿真场景
+序号      场景          信源概率分布	信源编码	信道编码	信道错误传递概率
+1       信源非理想	    P(0)=0.1	    有   	    无	        0
+2       信源非理想	    P(0)=0.1	    无   	    无	        0
+3       信道非理想	    等概率	        无	        有          0.01
+4       信道非理想	    等概率	        无	        无          0.01
+5       一般非理想	    P(0)=0.1	    有   	    有	        0.01
+6       一般非理想	    P(0)=0.1	    有   	    无	        0.01
+7       一般非理想	    P(0)=0.1	    无   	    有	        0.01
+8       一般非理想	    P(0)=0.1	    无   	    无	        0.01
+"""
+#仿真场景设置
 info = [
     (0.1, True, False, 0),
     (0.1, False, False, 0),
@@ -63,6 +49,44 @@ cases = [CASE_BASE(prob0=x[0], source_codec=x[1], channel_codec=x[2], error_rate
 # case6 = CASE_BASE(prob0=0.1, source_codec=True, channel_codec=False, error_rate=0.01)
 # case7 = CASE_BASE(prob0=0.1, source_codec=False, channel_codec=True, error_rate=0.01)
 # case8 = CASE_BASE(prob0=0.1, source_codec=False, channel_codec=False, error_rate=0.01)
+
+# 获取当前 Python 解释器的路径
+# python_executable = sys.executable
+python_executable = ".\\"
+# 命令字典
+commands = {
+    'source': os.path.join(python_executable, 'lib', 'IS','byteSource.py'),
+    'channel': os.path.join(python_executable, 'lib','IC', 'byteChannel.py'),
+    'DMS_create': os.path.join(python_executable, 'lib','IS', 'generate.py'),
+    'codec_source': os.path.join(python_executable, 'lib','IS_enorde', 'byteSourceCoder.py'),
+    'codec_channel': os.path.join(python_executable, 'lib','IC_enorde', 'repetitionCoder.py'),
+    'calc_source': os.path.join(python_executable, 'lib', 'calcDMSInfo.py'),
+    'calc_channel': os.path.join(python_executable, 'lib', 'calcBSCInfo.py'),
+    'calc_codec_source': os.path.join(python_executable, 'lib', 'calcCodecInfo.py'),
+    'calc_codec_channel': os.path.join(python_executable, 'lib', 'calcErrorRate.py'),
+    'calc_theory': os.path.join(python_executable, 'lib', 'calcInfo.py'),
+}
+
+# 使用命令字典
+cmd_source = f'{commands["source"]} '
+cmd_channel = f'{commands["channel"]} '
+cmd_DMS_create = f'{commands["DMS_create"]} '
+cmd_codec_source = f'{commands["codec_source"]} '
+cmd_codec_channel = f'{commands["codec_channel"]} '
+cmd_calc_source = f'{commands["calc_source"]} '
+cmd_calc_channel = f'{commands["calc_channel"]} '
+cmd_calc_codec_source = f'{commands["calc_codec_source"]} '
+cmd_calc_codec_channel = f'{commands["calc_codec_channel"]} '
+cmd_calc_theory = f'{commands["calc_theory"]} '
+
+#获取data路径
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+data_dir = os.path.join(base_dir, 'data')
+if not os.path.exists(data_dir) or os.path.isfile(data_dir):
+    if os.path.isfile(data_dir):
+        os.remove(data_dir)
+    os.mkdir(data_dir)
+
 def read_file_size(path):
     with open(path, 'rb') as f:
         f.seek(0, 2)
@@ -72,48 +96,43 @@ def read_header_size(path):
     with open(path, 'rb') as f:
         return int.from_bytes(f.read(2), 'little')
 
-
-if not os.path.exists(data_dir) or os.path.isfile(data_dir):
-    if os.path.isfile(data_dir):
-        os.remove(data_dir)
-    os.mkdir(data_dir)
-
 source_info_path = os.path.join(data_dir, 'DMS.info.csv')
 channel_info_path = os.path.join(data_dir, 'BSC.info.csv')
 channel_codec_info_path = os.path.join(data_dir, 'RC.info.csv')
 source_codec_info_path = os.path.join(data_dir, 'HC.info.csv')
 theory_info_path = os.path.join(data_dir, 'results.csv')
-for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
-    if os.path.isfile(info_path):
-        os.remove(info_path)
+
+#防止已有文件冲突，影响新文件保存
+# for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
+#     if os.path.isfile(info_path):
+#         os.remove(info_path)
 
 for i,case in enumerate(cases):
-    i+=1
     print('case %d:' % i)
-    case_path = case_dir.format(i)
-    if os.path.exists(case_path):
-        shutil.rmtree(case_path)
+    
+    """"
+    信源-》信源编码-》信道编码-》信道-》信道解码-》信源解码-》实测指标-》理论计算和表格统计
+    """
 
-    os.mkdir(case_path)
     # 信源
     prob1 = 1. - case['prob0']
-    source_csv_path = os.path.join(case_path, 'DMS.p0=%.3f.csv' % case['prob0'])
-    source_path = os.path.join(case_path, 'DMS.p0=%.3f.dat' % case['prob0'])
+    source_csv_path = os.path.join(data_dir, 'DMS.p0=%.3f.csv' % case['prob0'])
+    source_path = os.path.join(data_dir, 'DMS.p0=%.3f.dat' % case['prob0'])
     check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(prob1, source_csv_path))
     check_call(cmd_source + ' "{:s}" "{:s}" {:d}'.format(source_csv_path, source_path, msg_length))
+
     # 信源编码
     if case['source_codec']:
-        source_codec_path = os.path.join(case_path, 'HC.en.p0={:.3f}.dat'.format(case['prob0']))
+        source_codec_path = os.path.join(data_dir, 'HC.en.p0={:.3f}.dat'.format(case['prob0']))
         check_call(cmd_codec_source + ' -v encode "{}" "{}" "{}"'.format(source_csv_path, source_path, source_codec_path))
-        source_codec_header_path = source_codec_path
         source_codec_header = read_header_size(source_codec_path)
     else:
         source_codec_path = source_path
-        source_codec_header_path = ''
         source_codec_header = 0
+
     # 信道编码
     if case['channel_codec']:
-        channel_codec_path = os.path.join(case_path, 'RC.en.p0={:.3f}.dat'.format(case['prob0']))
+        channel_codec_path = os.path.join(data_dir, 'RC.en.p0={:.3f}.dat'.format(case['prob0']))
         check_call(cmd_codec_channel + ' -v encode {:d} "{}" "{}"'.format(repeat_length, source_codec_path, channel_codec_path))
         channel_codec_header = repeat_header_size
     else:
@@ -123,30 +142,32 @@ for i,case in enumerate(cases):
 
     # 噪声
     error_rate = case['error_rate']
-    noise_csv_path = os.path.join(case_path, 'BSC.p=%.3f.csv' % error_rate)
-    noise_path = os.path.join(case_path, 'BSC.p=%.3f.len=%d.dat' % (error_rate, channel_codec_length))
+    noise_csv_path = os.path.join(data_dir, 'BSC.p=%.3f.csv' % error_rate)
+    noise_path = os.path.join(data_dir, 'BSC.p=%.3f.len=%d.dat' % (error_rate, channel_codec_length))
     check_call(cmd_DMS_create + ' {:.3f} {:s}'.format(error_rate, noise_csv_path))
     check_call(cmd_source + ' "{:s}" "{:s}" {:d} -p ({},0,0,0)'.format(
         noise_csv_path, noise_path, channel_codec_length, (channel_codec_header + repeat_length * source_codec_header)))
+    
     # 信道传输
-    channel_path = os.path.join(case_path, 'BSC.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
+    channel_path = os.path.join(data_dir, 'BSC.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
     check_call(cmd_channel + ' "{}" "{}" "{}" -O'.format(channel_codec_path, noise_path, channel_path))
 
     # 信道解码
     if case['channel_codec']:
-        channel_decode_path = os.path.join(case_path, 'RC.de.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
+        channel_decode_path = os.path.join(data_dir, 'RC.de.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
         check_call(cmd_codec_channel + ' -v decode "{}" "{}"'.format(channel_path, channel_decode_path))
     else:
         channel_decode_path = channel_path
+
     # 信源解码
     if case['source_codec']:
-        source_decode_path = os.path.join(case_path, 'HC.de.p0={:.3f}.p={:.3f}.dat'.format(case['prob0'], error_rate))
+        source_decode_path = os.path.join(data_dir, 'HC.de.p0={:.3f}.p={:.3f}.dat'.format(case['prob0'], error_rate))
         check_call(cmd_codec_source + ' -v decode "{}" "{}"'.format(channel_decode_path, source_decode_path))
     else:
         source_decode_path = channel_decode_path
 
     # 计算实测指标
-    source_pmf_path = os.path.join(case_path, 'DMS.pmf.p0=%.3f.csv' % case['prob0'])
+    source_pmf_path = os.path.join(data_dir, 'DMS.pmf.p0=%.3f.p=%.3f.csv' % (case['prob0'], error_rate))
     check_call(cmd_calc_source + ' "{}" "{}" --export-p "{}"'.format(source_path, source_info_path, source_pmf_path))
     check_call(cmd_calc_channel + ' "{}" "{}" "{}" -v'.format(
         channel_codec_path, channel_path, channel_info_path))
@@ -154,10 +175,9 @@ for i,case in enumerate(cases):
         source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path))
     check_call(cmd_calc_codec_source + ' "{}" "{}" "{}" -p {:d} -O'.format(
         source_path, source_codec_path, source_codec_info_path, source_codec_header))
+    
     # 理论计算和表格统计
-    check_call(cmd_calc_theory + ' --p0 {:.4f} -p {:.5f} --rs {:.3f} --HEADER "{}" --LEN {:d}'
-                                 ' "{}" "{}" "{}" "{}"'.format(
-        case['prob0'], error_rate, rs, source_codec_header_path, repeat_length,
-        theory_info_path, source_info_path, source_codec_info_path, channel_codec_info_path
+    check_call(cmd_calc_theory + ' --p1 {:f} -p {:f} --rs {:f} --LEN {:d}'
+                                 ' --SOURCE "{}" --SOURCE_CODEC "{}" --CHANNEL_CODEC "{}"'.format(
+        prob1, error_rate, rs, repeat_length, source_info_path, source_codec_info_path, channel_codec_info_path
     ))
-
