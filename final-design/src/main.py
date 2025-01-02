@@ -83,9 +83,9 @@ channel_info_path = os.path.join(data_dir, 'BSC.info.csv')
 channel_codec_info_path = os.path.join(data_dir, 'RC.info.csv')
 source_codec_info_path = os.path.join(data_dir, 'HC.info.csv')
 theory_info_path = os.path.join(data_dir, 'results.csv')
-# for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
-#     if os.path.isfile(info_path):
-#         os.remove(info_path)
+for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
+    if os.path.isfile(info_path):
+        os.remove(info_path)
 
 for i,case in enumerate(cases):
     i+=1

@@ -1,3 +1,4 @@
+### calcErrorRate.py ###
 """ A basic program calculate the error rate of repetition coding file.
 
 This program is a basic demo showing a real-world example of source coding. The key point here is how to handle meta-data, such as codebook, so that decoder can get all necessary information to properly decode.
