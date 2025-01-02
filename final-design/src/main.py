@@ -83,9 +83,9 @@ channel_info_path = os.path.join(data_dir, 'BSC.info.csv')
 channel_codec_info_path = os.path.join(data_dir, 'RC.info.csv')
 source_codec_info_path = os.path.join(data_dir, 'HC.info.csv')
 theory_info_path = os.path.join(data_dir, 'results.csv')
-for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
-    if os.path.isfile(info_path):
-        os.remove(info_path)
+# for info_path in (source_info_path, channel_info_path, channel_codec_info_path, source_codec_info_path, theory_info_path):
+#     if os.path.isfile(info_path):
+#         os.remove(info_path)
 
 for i,case in enumerate(cases):
     i+=1
@@ -150,8 +150,9 @@ for i,case in enumerate(cases):
     check_call(cmd_calc_source + ' "{}" "{}" --export-p "{}"'.format(source_path, source_info_path, source_pmf_path))
     check_call(cmd_calc_channel + ' "{}" "{}" "{}" -v'.format(
         channel_codec_path, channel_path, channel_info_path))
-    check_call(cmd_calc_codec_channel + ' "{}" "{}" "{}" "{}" -v'.format(
-        source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path))
+    check_call(cmd_calc_codec_channel + ' "{}" "{}" "{}" "{}" -v {}'.format(
+        source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path,
+        ('' if case['channel_codec'] else '--no-header')))
     check_call(cmd_calc_codec_source + ' "{}" "{}" "{}" -p {:d} -O'.format(
         source_path, source_codec_path, source_codec_info_path, source_codec_header))
     # 理论计算和表格统计

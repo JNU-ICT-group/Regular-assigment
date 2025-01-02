@@ -1,4 +1,5 @@
 src/lib/__pycache__/
+data/case_*/
 _tmp.*
 DMS.p0=*.dat
 DMS.p0=*.csv

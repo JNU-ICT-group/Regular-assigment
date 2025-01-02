@@ -46,6 +46,7 @@ def main():
     parser.add_argument('ENCODE', type=str, help='path to input file 2 (after encoding)')
     parser.add_argument('DECODE', type=str, help='path to input file 3 (after decoding)')
     parser.add_argument('RESULT', type=str, nargs='?', help='path to the result CSV file')
+    parser.add_argument('--no-header', action='store_false', help='Disable consider the header')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
@@ -61,7 +62,7 @@ def main():
     for source_path, encode_path, decode_path in zip(SOURCE, ENCODE, DECODE):
         if args.verbose:
             print(f'Comparing source "{os.path.basename(source_path)}", encoded "{os.path.basename(encode_path)}", and decoded "{os.path.basename(decode_path)}" ...')
-        compare_files(source_path, encode_path, decode_path, args.RESULT, args.verbose)
+        compare_files(source_path, encode_path, decode_path, args.RESULT, args.no_header, args.verbose)
         if args.verbose:
             print('')
 
@@ -70,7 +71,7 @@ def path_split(path):
     return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
-def compare_files(source_path, encode_path, decode_path, result_path, verbose=False):
+def compare_files(source_path, encode_path, decode_path, result_path, heading=False, verbose=False):
     """
     计算误码率，压缩比和信源信息传输率，并将结果保存到 CSV 文件。
 
@@ -89,6 +90,12 @@ def compare_files(source_path, encode_path, decode_path, result_path, verbose=Fa
     decoded = np.fromfile(decode_path, dtype='uint8')  # 读取解码后的文件数据
 
     compare_size = min(len(source), len(decoded))  # 取较小的文件大小作为比较大小
+    if heading:
+        code_len = int(encoded[0])
+        assert 3 <= code_len <= 9 and code_len % 2, code_len
+        encoded = encoded[5:]
+    else:
+        code_len = 0
 
     if len(source) != len(decoded):
         print(f'[WARNING] These files have different sizes: {len(source)} (original), {len(decoded)} (decoded)')
