@@ -13,7 +13,7 @@ v1.4 改为无扩展二元信源
 	信源输出消息序列文件
 
 """
-__version__ = '1.3'
+__version__ = '1.4'
 
 import os
 import argparse

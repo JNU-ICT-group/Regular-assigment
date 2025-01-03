@@ -22,7 +22,7 @@ import numpy as np
 
 __author__ = "Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn; "
-__version__ = "20241031.1001"
+__version__ = "1.2"
 
 
 bit_counts = np.float32(bytearray(map(int.bit_count, range(256))))
