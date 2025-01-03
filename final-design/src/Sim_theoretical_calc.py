@@ -23,9 +23,8 @@ def calc_source_info_rate(p, rs=1.0, use_source_coding=False):
         return binary_entropy(p) * rs
     else:
         # 不采用信源编码，则“理论上”信源仍按 rs=1 (题目简化设定)
-        # 但如果题目中对于非等概信源又规定了某些特殊情况，可按需要调整。
         # 在题目的案例里，无信源编码时常直接写 RS=H(X) or RS=1 也可以。
-        # 这里留给你根据题目实际表格的做法选择返回值。
+        # 这里根据题目实际表格的做法选择返回值。
         # ======================================================
         # 如果完全遵循题目中“无信源编码时，依然写RS=H(X)”，可写：
         return binary_entropy(p) * rs
@@ -38,7 +37,7 @@ def calc_channel_data_rate(rs_source, use_channel_coding=False, n=1):
     计算信道的数据率 rc (比特/秒).
     - rs_source: 实际输入端（可能是信源编码后）的发送速率(比特/秒)。
     - use_channel_coding: 是否使用了重复编码(或其他信道编码)。
-    - n: 若使用重复编码，则每个符号重复 n 次。此时 rc = n * rs_source （题目中表格多处给出类似结果）。
+    - n: 若使用重复编码，则每个符号重复 n 次。此时 rc = n * rs_source 
     """
     if use_channel_coding:
         return n * rs_source
@@ -65,7 +64,7 @@ def calc_channel_output_info_rate(Rci, Pe, use_channel_coding=False,
     在题目中若：
       1) 无信道编码 => Rco = (1 - Pe)*Rci
       2) 有信道编码(理想) => Rco ~ Rci
-      3) 其他折衷情况 => Rco = (1 - Pe_eff)*Rci, 可根据场景调整
+      3) 其他折中情况 => Rco = (1 - Pe_eff)*Rci, 可根据场景调整
 
     这里先做一个通用实现：
     """
@@ -105,7 +104,7 @@ def calc_sink_error_rate(Pe, use_channel_coding=False,
     题目中示例：
        1) 无信道编码 => er = Pe
        2) 有信道编码(理想) => er ~ 0
-       3) 题目表格给出的非理想数值 => 可能是 0.029 等等，自己设定或计算。
+       3) 给出的非理想数值 => 可能是 0.029 等等，自己设定或计算。
 
     下面给出两个示例：
        - 完全依照表格写死
@@ -115,6 +114,9 @@ def calc_sink_error_rate(Pe, use_channel_coding=False,
         # 无信道编码
         return Pe
     else:
+
+        #这里需要和zzx理论推导再对齐一下决定
+
         # 使用重复编码时，可以进行多数表决：
         # 正确解码需要多数比特正确 => 若 n=3, 至少 2 个比特正确
         # block_error_prob = P(X解码错误) = P(出现 ≥2 bit 错) ...
@@ -123,5 +125,5 @@ def calc_sink_error_rate(Pe, use_channel_coding=False,
         #   => = 3*(Pe^2)*(1-Pe) + Pe^3
         #   => final er = p_err_block (若一块对就对，一块错就错)
         # 不过题目表格中给出 scenario=4,6,8 的 er=0.029，不符合严格的 0.01 重复码多数判决值 (大约0.000298)
-        # 因此我们直接返回一个示例值，由题目表格决定。
+        # 因此我直接返回一个示例值，由题目表格决定。
         return None  # 具体数值后面用表格写死。

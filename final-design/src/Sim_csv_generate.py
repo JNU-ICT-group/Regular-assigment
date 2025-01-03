@@ -2,7 +2,7 @@ import csv
 import math
 import os
 
-from theoretical_calculation import (
+from Sim_theoretical_calc import (
     binary_entropy,
     calc_source_info_rate,
     calc_channel_data_rate,
@@ -75,7 +75,7 @@ def generate_scenario_csv(
     else:
         # 若未指定，从函数自动计算
         er = calc_sink_error_rate(Pe, use_channel_coding, repeated_code_n=n)
-        # 如果理想纠错 => er 近似 0；这里只是演示
+        # 如果理想纠错 => er 近似 0；这里只是演示，具体等待zzx推导确定后再调整
         if use_channel_coding:
             er = 0.0 if Pe > 0.0 else 0.0  # 这里可自行微调
     
@@ -84,7 +84,12 @@ def generate_scenario_csv(
     headers = ["RS(bit/s)", "rc(bit/s)", "Rci(bit/s)", "Rco(bit/s)", "RI(bit/s)", "er"]
     row_data = [RS, rc, Rci, Rco, RI, er]
 
-    filename = f"scenario_{scenario_id}.csv"
+    # 定义输出目录
+    output_dir = "final-design/data/theoretical_output/"  # 你可以修改为需要的路径
+    # 确保输出目录存在
+    os.makedirs(output_dir, exist_ok=True)
+    # 生成完整的文件路径
+    filename = os.path.join(output_dir, f"scenario_{scenario_id}.csv")
     with open(filename, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(headers)
