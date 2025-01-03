@@ -98,6 +98,32 @@ def calc_huffman_encoded_entropy(encoded_file):
     
     return entropy
 
+
+def read_input(in_file_name) -> (np.ndarray, int):
+    """使用numpy的fromfile函数读取文件并计算其信息熵"""
+    # 使用 numpy.fromfile 以无符号整数形式读取文件
+    arr = np.fromfile(in_file_name, dtype=np.uint8)
+    return arr, len(arr)
+
+def generate_error_channel(arr, noise) -> np.ndarray:
+    """
+    使用np.searchsorted对np.random.uniform的结果做分类，使其中1的概率为p（二元对称信道错误传输概率），
+    即0的概率为1-p，为了方便使用byteSource产生随机序列，将二元概率空间以8个bit一组，合并为1byte长度，即N=8次扩展。
+    然后使用异或将NOISE加载到256元的信源X上。这种方法仅适用于BSC
+
+    Parameters:
+        arr (numpy.ndarray): 信源X。
+        noise (numpy.ndarray): 信道的噪声。
+
+    Returns:
+        numpy.ndarray: 信道输出的信源Y。
+    """
+    if len(arr) * 8 == len(noise):
+        noise = np.packbits(noise)
+    out = np.bitwise_xor(arr, noise)
+    return out
+
+
 ##############################################################################
 # 2.1.2. 信源指标计算模块
 ##############################################################################
@@ -123,7 +149,9 @@ def calc_dms_info(source_file: str,
     prob_256 = calc_probability(data)
     # 导出 256 元分布 (可选)
     if export_256_csv:
-        write_export(prob_256, export_256_csv)
+
+        write_export(export_256_csv , prob_256)
+
 
     # 计算二元信息熵 (bit/二元消息)
     p0 = calc_prob0(prob_256)
@@ -150,93 +178,131 @@ def calc_dms_info(source_file: str,
 # 2.2.2. 信道指标计算模块
 ##############################################################################
 
+
+noise = read_input(noise_path)
+noise_file = generate_error_channel(arr, noise)
+
 def calc_channel_info(channel_in_file: str,
+                      noise_file: str,
                       channel_out_file: str,
                       channel_info_csv: str):
     """
+    2.2.2. 信道指标计算（融合异或生成输出 + 理想/非理想信道判定）
+
     输入:
-      - channel_in_file: 信道输入消息序列
-      - channel_out_file: 信道输出消息序列
-    输出:
-        包含以下指标数值的文件（CSV格式）
-            1输入消息序列的信息熵（信息比特/二元消息）
-            2输出消息序列的信息熵（信息比特/二元消息）
-            3平均互信息量（信息比特/二元消息）
-        （小表头：[in_file, out_file, H_in(bit/二元), H_out(bit/二元), I(bit/二元), length_in(bytes), length_out(bytes)]）
+      - channel_in_file  : 信道输入消息序列 (uint8字节序列)
+      - noise_file       : 噪声文件 (bit级或byte级), 若 len(arr_in)*8 == len(noise), 则需 packbits
+      - channel_out_file : 信道输出消息序列 (uint8字节序列), 由 (in XOR noise) 生成
+      - channel_info_csv : 结果CSV文件, 追加以下字段:
+         [
+           channel_in_file, channel_out_file, noise_file,
+           H_in(bit/二元), H_out(bit/二元), I(bit/二元),
+           length_in(bytes), length_out(bytes), p
+         ]
+      其中:
+        - p     : (噪声文件中 '1' 的比特占比) => 实际错误传递概率
+        - H_in  : 输入消息熵（bit/二元消息）
+        - H_out : 输出消息熵（bit/二元消息）
+        - I     : 互信息（bit/二元消息），若 p=0 则默认 I=H_in，否则调用外部calc_joint_H_xy等计算
     """
 
+    # ========== 1) 读取输入及噪声 ==========
     data_in = read_file_as_bytes(channel_in_file)
-    data_out = read_file_as_bytes(channel_out_file)
-    len_in = len(data_in)
+    noise   = read_file_as_bytes(noise_file)
+
+    len_in   = len(data_in)
+    len_noise = len(noise)
+
+    # 若输入为空，直接写入CSV并结束
+    if len_in == 0:
+        need_header = not os.path.isfile(channel_info_csv)
+        with open(channel_info_csv, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+            if need_header:
+                writer.writerow([
+                    "channel_in_file", "channel_out_file", "noise_file",
+                    "H_in(bit/二元)", "H_out(bit/二元)", "I(bit/二元)",
+                    "length_in(bytes)", "length_out(bytes)", "p"
+                ])
+            writer.writerow([channel_in_file, channel_out_file, noise_file, 0, 0, 0, 0, 0, 0])
+        return
+
+    # ========== 2) 解析噪声 (bit级 / byte级) ==========
+    # 若 len_in*8 == len_noise => noise是bit级, 需 np.packbits
+    # 若 len_in == len_noise  => 已是字节级
+    # 否则视为非法输入
+    if len_in * 8 == len_noise:
+        noise = np.packbits(noise)
+    elif len_in == len_noise:
+        pass
+    else:
+        raise ValueError(f"[ERROR] 噪声长度不匹配: len_in={len_in}, len_noise={len_noise}.")
+
+    # 计算噪声中的 '1' 比特占比 => 实际传输错误率 p
+    total_bits   = len_in * 8
+    num_one_bits = np.unpackbits(noise).sum()
+    p = num_one_bits / total_bits
+
+    # ========== 3) 生成信道输出: data_out = data_in XOR noise ==========
+    data_out = np.bitwise_xor(data_in, noise)
+    # 把 data_out 写到 channel_out_file
+    data_out.tofile(channel_out_file)
     len_out = len(data_out)
 
-#输入消息序列的信息熵(H(X))
-    prob_in_256 = calc_probability(data_in)  # 计算256元分布
-    H_in = calc_entropy_256(prob_in_256)     # 计算信道输入的信息熵(bit/字节)
-    # 转换单位: 从bit/字节转为bit/二元消息
-    H_in_bit = H_in / 8  # 每个字节8个二元消息,所以除以8
+    # ========== 4) 计算输入消息熵 H_in (bit/二元) ==========
+    prob_in_256 = calc_probability(data_in)
+    H_in_256 = calc_entropy_256(prob_in_256)  # bit/字节
+    H_in_bit = H_in_256 / 8.0                 # bit/二元消息
 
-    p=0.01
-#输出消息序列的信息熵
-    if p == 0:
-        #理想信道
-        prob_out_256 = calc_probability(data_out)  # 计算256元分布 
-        H_out = calc_entropy_256(prob_out_256)     # 计算信道输出的信息熵(bit/字节)
-        # 转换单位: 从bit/字节转为bit/二元消息 
-        H_out_bit = H_out / 8  # 每个字节8个二元消息,所以除以8
+    # ========== 5) 区分理想 (p=0) / 非理想 (p>0) 信道，计算输出熵 / 互信息 ==========
+    if np.isclose(p, 0.0, atol=1e-12):
+        # 理想信道 => data_out ~ data_in
+        prob_out_256 = calc_probability(data_out)
+        H_out_256 = calc_entropy_256(prob_out_256)
+        H_out_bit = H_out_256 / 8.0
+        I_bit = H_in_bit  # 对无差错信道, I(X;Y)=H(X)=H_in_bit
     else:
-        #非理想信道
-        #需要先确定先验概率分布
+        # 非理想信道 => p>0
+        # 输出熵 H_out
+        prob_out_256 = calc_probability(data_out)
+        H_out_256 = calc_entropy_256(prob_out_256)
+        H_out_bit = H_out_256 / 8.0
 
-        
-        #这个错误概率传递方法待定，所以这部分先注释掉
+        # 互信息 I(X;Y) = H(X) + H(Y) - H(X,Y)
+        try:
+            # 若外部模块calcBSCInfo提供了calc_joint_H_xy(data_in, data_out) => 返回bit/字节
+            H_xy_256 = calcBSCInfo.calc_joint_H_xy(data_in, data_out)
+        except AttributeError:
+            # 若尚未实现, 暂用0或自行实现
+            H_xy_256 = 0.0
+        I_256 = H_in_256 + H_out_256 - H_xy_256
+        I_bit = I_256 / 8.0
 
+    # ========== 6) 写结果到 CSV ==========
 
-        # # 计算输入概率分布
-        # prob_in_256 = calc_probability(data_in)
-        
-        # # 计算联合分布矩阵 P(X,Y)
-        # joint_p_xy = calc_joint_distribution_matrix(prob_in_256, p)
-        
-        # # 计算输出边缘分布 P(Y)
-        # prob_out_256 = calc_p_y(joint_p_xy)
-        
-        # # 计算输出熵 H(Y)
-        # H_out = calc_entropy_256(prob_out_256)  # bit/字节
-        
-        # # 转换为bit/二元消息
-        H_out_bit = H_out / 8
-
-
-#平均互信息量（公式我就不写了）
-    X = data_in
-    Y = data_out
-    H_XY = calcBSCInfo.calc_joint_H_xy(X, Y)
-    I_XY = calcBSCInfo.H_X + calcBSCInfo.H_Y - H_XY
-
-
-    # 在 channel_info_csv 追加输出
     need_header = not os.path.isfile(channel_info_csv)
     with open(channel_info_csv, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
         if need_header:
             writer.writerow([
-                "channel_in_file", 
-                "channel_out_file",
-                "H_in(bit/二元)", 
-                "H_out(bit/二元)", 
-                "I(bit/二元)(approx)", 
-                "length_in(bytes)", 
-                "length_out(bytes)"
+
+                "channel_in_file", "channel_out_file", "noise_file",
+                "H_in(bit/二元)", "H_out(bit/二元)", "I(bit/二元)",
+                "length_in(bytes)", "length_out(bytes)", "p"
+
             ])
         row = [
             channel_in_file,
             channel_out_file,
+
+            noise_file,
             f"{H_in_bit:.6f}",
             f"{H_out_bit:.6f}",
-            f"{I_XY:.6f}",
+            f"{I_bit:.6f}",
             f"{len_in}",
-            f"{len_out}"
+            f"{len_out}",
+            f"{p:.8f}"
+
         ]
         writer.writerow(row)
 
@@ -245,58 +311,80 @@ def calc_channel_info(channel_in_file: str,
 ##############################################################################
 
 def calc_source_codec_info(before_file: str,
+
+                           pmf_file_name: str,
                            after_file: str,
-                           pmf_file_name,
+
                            source_codec_info_csv: str):
     """
     输入:
       - before_file: 编码前文件(原始)
+
+      - pmf_file_name: PMF（概率质量函数）CSV 文件，用于构建霍夫曼编码器
       - after_file: 编码后文件
     输出:
-    包含以下指标数值的文件（CSV格式）
-        压缩比（编码前文件字节数/编码后文件字节数）=size0/(size1-header)
-        平均码长（码字数据比特/信源字节）
-        编码效率
-        编码前的文件的信息熵（信息比特/字节）
-        编码后的文件的信息熵（信息比特/字节）
-            
-      - 在 source_codec_info_csv 写一行:
+       在 source_codec_info_csv 追加写入一行:
          [
            before_file, after_file, compression_ratio,
-           avg_codelen(bit/原字节), codec_efficiency,
-           H_before(bit/字节), H_after(bit/字节),
+           avg_codelen(bit/origin_byte), codec_efficiency,
+           H_before(bit/byte), H_after(bit/byte),
            length_before, length_after
          ]
+       各符号说明:
+         - compression_ratio = (原文件大小)/(编码后文件大小)
+         - avg_codelen       = (编码后文件的比特数)/(原文件字节数)
+         - codec_efficiency  = (1 - 1/ratio)*100%
+         - H_before          = 原文件信息熵(bit/字节)
+         - H_after           = 编码后文件信息熵(bit/字节)
     """
+    # >>> 1. 使用 PMF 做霍夫曼编码 <<<
+    # 调用 encode() 函数 (来自 bytesourceCoder 模块)
+    # 将 before_file 编码后写入 after_file
+    source_len, encoded_len = bytesourceCoder.encode(pmf_file_name, before_file, after_file, byteorder='little')
 
+    # 如果原文件为空(或异常)，则直接记录并返回
+    if source_len == 0:
+        # 写入结果 CSV
+        need_header = not os.path.isfile(source_codec_info_csv)
+        with open(source_codec_info_csv, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+            if need_header:
+                writer.writerow([
+                    "before_file", "after_file",
+                    "compression_ratio",
+                    "avg_code_len(bit/origin_byte)",
+                    "codec_efficiency(%)",
+                    "H_before(bit/byte)",
+                    "H_after(bit/byte)",
+                    "length_before(bytes)",
+                    "length_after(bytes)"
+                ])
+            writer.writerow([before_file, after_file, 0, 0, 0, 0, 0, 0, 0])
+        return
+
+    # >>> 2. 分析编码前、编码后文件 <<<
     data_before = read_file_as_bytes(before_file)
     data_after  = read_file_as_bytes(after_file)
 
-    len_b = len(data_before)
-    len_a = len(data_after)
+    len_b = len(data_before)  # 原文件字节数
+    len_a = len(data_after)   # 编码后文件字节数
 
-#压缩比（编码前文件字节数/编码后文件字节数）
-    ratio = calc_compress_ratio(data_before, data_after)
-
-#平均码长（码字数据比特/信源字节）
-    avlen = calc_code_avlen(data_before, data_after)
-
-#编码效率
+    # 压缩比
+    ratio = calc_compress_ratio(len_b, len_a)
+    # 平均码长
+    avlen = calc_code_avlen(len_b, len_a)
+    # 编码效率
     efficiency = calc_efficiency(ratio)
 
-#编码前的文件的信息熵（信息比特/字节）
-    calc_entropy(data_before)  # bit/字节
-    # 去除0概率避免log2(0)
-    p = p[p > 0]
-    entropy3 = calc_entropy(p)
+    # 编码前文件的信息熵 (bit/字节)
+    prob_before = calc_probability(data_before)
+    H_before = calc_entropy(prob_before)
 
-#编码后的文件的信息熵（信息比特/字节）
-    after_file = bytesourceCoder.encode(pmf_file_name, in_file_name, out_file_name, byteorder = 'little')
-    #huoffman编码后的文件的信息熵
-    encoded_entropy = calc_huffman_encoded_entropy(after_file)
+    # 编码后文件的信息熵 (bit/字节)，跳过头部，对实际编码数据做熵计算
+    H_after = calc_huffman_encoded_entropy(after_file)
 
+    # >>> 3. 写入结果 CSV <<<
 
-    # 写入结果 CSV
     need_header = not os.path.isfile(source_codec_info_csv)
     with open(source_codec_info_csv, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
@@ -305,7 +393,9 @@ def calc_source_codec_info(before_file: str,
                 "before_file", "after_file",
                 "compression_ratio",
                 "avg_code_len(bit/origin_byte)",
-                "codec_efficiency",
+
+                "codec_efficiency(%)",
+
                 "H_before(bit/byte)",
                 "H_after(bit/byte)",
                 "length_before(bytes)",
@@ -317,12 +407,17 @@ def calc_source_codec_info(before_file: str,
             f"{ratio:.6f}",
             f"{avlen:.6f}",
             f"{efficiency:.6f}",
-            f"{entropy3:.6f}",
-            f"{encoded_entropy:.6f}",
+
+            f"{H_before:.6f}",
+            f"{H_after:.6f}",
+
             f"{len_b}",
             f"{len_a}"
         ]
         writer.writerow(row)
+
+
+
 
 ##############################################################################
 # 2.4.3. 信道编解码指标计算模块
@@ -433,6 +528,9 @@ def main():
     source_codec_file  = os.path.join(data_dir, "HC.en.p0=0.1.dat")
     channel_decode_file= os.path.join(data_dir, "RC.de.p0=0.1.p=0.01.dat")
 
+
+
+
     # (1) 2.1.2. 信源指标: dms_info.csv
     dms_info_csv = os.path.join(data_dir, "DMS.info.csv")
     dms_256_csv  = os.path.join(data_dir, "DMS.256dist.csv")
@@ -444,7 +542,10 @@ def main():
 
     # (3) 2.3.3. 信源编码指标: HC.info.csv
     source_codec_info_csv = os.path.join(data_dir, "HC.info.csv")
-    calc_source_codec_info(source_file, source_codec_file, source_codec_info_csv)
+
+    parser_encode.add_argument('PMF', type=str, help='Path to probability mass function CSV file')
+    calc_source_codec_info(source_file, source_codec_file,pmf_file_name, source_codec_info_csv)
+
 
     # (4) 2.4.3. 信道编解码指标: RC.info.csv
     channel_codec_info_csv = os.path.join(data_dir, "RC.info.csv")
