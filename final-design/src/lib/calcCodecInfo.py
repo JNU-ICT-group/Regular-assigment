@@ -1,4 +1,5 @@
 ###    calcCodecInfo.py    ###
+#coding=utf-8
 
 """
 
@@ -21,7 +22,6 @@ import argparse
 import numpy as np
 import csv
 
-from generate import bit_counts
 
 def main(input_path, encode_path, output_path, **kwgs):
     input_paths = path_split(input_path)
@@ -39,7 +39,7 @@ def work_flow(input_path, encode_path, output_path, **kwgs):
         input_path = os.path.join(kwgs['base_path'], input_path)
         encode_path = os.path.join(kwgs['base_path'], encode_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
-    if kwgs['message_state'] == 1:
+    if kwgs.get('message_state',0) == 1:
         print('Input path:', input_path)
         print('Output path:', output_path)
     if not os.path.isfile(input_path):
@@ -59,7 +59,7 @@ def work_flow(input_path, encode_path, output_path, **kwgs):
     avlen = calc_code_avlen(x_size, y_size)
     efficiency = calc_efficiency(ratio)
     info = [ratio, avlen, efficiency, entropy_source, entropy_encode]
-    if kwgs['message_state'] == 1:
+    if kwgs.get('message_state',0) == 1:
         print('\tFileSize=%6dB, Encoded=%6dB, av-Code-Len=%.6fbit/byte\n' % (x_size, y_size, info[1]))
     write_output(output_path, input_path, encode_path, info)
 
@@ -97,19 +97,11 @@ def calc_entropy(p: np.ndarray) -> float:
     return entropy
 
 
-def calc_prob0(prob) -> float:
-    return 1. - (prob * bit_counts).sum() / 8
-
-
-def calc_redundancy(p0: float) -> float:
-    return 1. - calc_entropy(np.float32([p0, 1-p0]))
-
-
 def calc_compress_ratio(size0, size1) -> float:
-    return size0 / size1
+    return size0 / size1 if size1 else 1
 
 def calc_code_avlen(size0, size1) -> float:
-    return 8 * size1 / size0
+    return 8 * size1 / size0 if size0 else 8
 
 def calc_efficiency(ratio: float) -> float:
     return (1. - 1/ratio) * 100
@@ -117,7 +109,7 @@ def calc_efficiency(ratio: float) -> float:
 def write_output(out_file_name, in_file_name, encode_file_name, info):
     if not os.path.isfile(out_file_name):
         out_file = open(out_file_name, 'w', newline='', encoding='utf-8')
-        out_file.write('"X(source)","Y(encoded)","compression ratio","L(avg code len)bit/byte","η(efficiency)%","H(X)bit/byte","H(Y)bit/byte"\n')
+        out_file.write(u'"X(source)","Y(encoded)","compression ratio","L(avg code len)bit/byte","η(efficiency)%","H(X)bit/byte","H(Y)bit/byte"\n')
     else:
         out_file = open(out_file_name, 'a', newline='', encoding='utf-8')
     with out_file:

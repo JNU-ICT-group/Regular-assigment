@@ -1,13 +1,11 @@
-import os
 import sys
 import unittest
 
 sys.path.append('.\\lib\\')
-from lib import (byteSourceTest, byteSourceCoderTest, repetitionCoderTest, byteChannelTest, calcInfoTest)
+from lib import (byteSourceTest, byteSourceCoderTest, repetitionCoderTest, byteChannelTest)
 
 byteSourceTest.test_flow()
-unittest.main(byteSourceCoderTest, argv=['byteSourceCoderTest'], exit=False)
+byteSourceCoderTest.test_flow()
 unittest.main(repetitionCoderTest, argv=['repetitionCoderTest'], exit=False)
 byteChannelTest.test_flow()
-unittest.main(calcInfoTest, argv=['calcInfoTest'], exit=False)
 

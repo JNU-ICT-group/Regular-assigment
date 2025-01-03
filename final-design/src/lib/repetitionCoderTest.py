@@ -168,33 +168,27 @@ class TestCalculateErrorRate(unittest.TestCase):
         """
         测试前的准备工作，生成一些临时文件。
         """
-        self.file1_path = "test_file1.bin"
-        self.file2_path = "test_file2.bin"
+        self.source_path = "source_file.bin"
+        self.encode_path = "encode_file.bin"
+        self.decode_path = "decode_file.bin"
         self.result_path = "test_result.csv"
-
         # 创建文件1，内容为 0b10101010
-        with open(self.file1_path, "wb") as file1:
-            file1.write(b"\xAA")
-
+        with open(self.source_path, "wb") as f:
+            f.write(b"\xAA")
+        encode(3, self.source_path, self.encode_path)
         # 创建文件2，内容为 0b10101010
-        with open(self.file2_path, "wb") as file2:
-            file2.write(b"\xAA")
-
-        # 创建结果文件 result.csv，假设要写入一些比较结果或标记
-        with open(self.result_path, "w", newline='') as result_file:
-            import csv
-            writer = csv.writer(result_file)
-            # 写入CSV表头（可以根据需要修改列名）
-            writer.writerow(["source_path", "encode_path", "decode_path", "compression_ratio", "error_rate", "source_rate", "encoded_rate"])
+        decode(self.encode_path, self.decode_path)
 
     def tearDown(self):
         """
         测试结束后的清理工作，删除临时文件。
         """
-        if os.path.exists(self.file1_path):
-            os.remove(self.file1_path)
-        if os.path.exists(self.file2_path):
-            os.remove(self.file2_path)
+        if os.path.exists(self.source_path):
+            os.remove(self.source_path)
+        if os.path.exists(self.encode_path):
+            os.remove(self.encode_path)
+        if os.path.exists(self.decode_path):
+            os.remove(self.decode_path)
         if os.path.exists(self.result_path):
             os.remove(self.result_path)
 
@@ -203,16 +197,20 @@ class TestCalculateErrorRate(unittest.TestCase):
         测试两个完全相同的文件，误码率应为 0.0。
         """
         print("Test 1: Testing identical files with 0.0 error rate.")
-        calcErrorRate.compare_files(self.file1_path, self.file1_path, self.file1_path, self.result_path)
+        calcErrorRate.compare_files(self.source_path, self.encode_path, self.source_path, self.result_path, True)
 
         # 检查结果文件内容
-        with open(self.result_path, "r") as result_file:
-            result = result_file.read().strip()
+        with open(self.result_path, "r") as f:
+            result = f.read().strip()
             print(result)  # 打印实际结果以便调试
-        # 检查 CSV 行是否包含正确的路径和其他数据
-        expected_line = f'"{self.file1_path}","{self.file1_path}","{self.file1_path}","1.0","0.0","0.0","0.0"'
-        self.assertIn(expected_line, result)
-        self.assertIn("1.0", result)
+            result = tuple(map(lambda s: s.strip('"'), result.split('\n')[1].split(',')))
+            self.assertEqual(result[0],self.source_path)
+            self.assertEqual(result[1],self.encode_path)
+            self.assertEqual(result[2],self.source_path)
+            self.assertAlmostEqual(float(result[3]),1/3)
+            self.assertAlmostEqual(float(result[4]),0.0)
+            self.assertAlmostEqual(float(result[5]),1.0, 3)
+            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
         print("Test 1 passed: Identical files tested successfully.")
         print()
 
@@ -222,19 +220,24 @@ class TestCalculateErrorRate(unittest.TestCase):
         """
         print("Test 2: Testing completely different files with 1.0 error rate.")
         # 修改文件2的内容为 0b01010101
-        with open(self.file2_path, "wb") as file2:
-            file2.write(b"\x55")
+        with open(self.decode_path, "wb") as f:
+            f.write(b"\x55")
 
-        calcErrorRate.compare_files(self.file1_path, self.file1_path, self.file2_path, self.result_path)
+        calcErrorRate.compare_files(self.source_path, self.encode_path, self.decode_path, self.result_path, True)
 
         # 检查结果文件内容
-        with open(self.result_path, "r") as result_file:
-            result = result_file.read().strip()
+        with open(self.result_path, "r") as f:
+            result = f.read().strip()
             print(result)  # 打印实际结果以便调试
+            result = tuple(map(lambda s: s.strip('"'), result.split('\n')[1].split(',')))
+            self.assertEqual(result[0],self.source_path)
+            self.assertEqual(result[1],self.encode_path)
+            self.assertEqual(result[2],self.decode_path)
+            self.assertAlmostEqual(float(result[3]),1/3)
+            self.assertAlmostEqual(float(result[4]),1.0)
+            self.assertAlmostEqual(float(result[5]),1.0, 3)
+            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
         # 检查 CSV 行是否包含正确的路径和其他数据
-        expected_line = f'"{self.file1_path}","{self.file1_path}","{self.file2_path}","1.0","1.0","0.0","0.0"'
-        self.assertIn(expected_line, result)
-        self.assertIn("1.0", result)
         print("Test 2 passed: Different files tested successfully.")
         print()
 
@@ -244,19 +247,23 @@ class TestCalculateErrorRate(unittest.TestCase):
         """
         print("Test 3: Testing partially different files with calculated error rate.")
         # 修改文件2的内容为 0b10101011
-        with open(self.file2_path, "wb") as file2:
+        with open(self.decode_path, "wb") as file2:
             file2.write(b"\xAB")
 
-        calcErrorRate.compare_files(self.file1_path, self.file1_path, self.file2_path, self.result_path)
+        calcErrorRate.compare_files(self.source_path, self.encode_path, self.decode_path, self.result_path, True)
 
         # 检查结果文件内容
-        with open(self.result_path, "r") as result_file:
-            result = result_file.read().strip()
+        with open(self.result_path, "r") as f:
+            result = f.read().strip()
             print(result)  # 打印实际结果以便调试
-        # 检查 CSV 行是否包含正确的路径和其他数据
-        expected_line = f'"{self.file1_path}","{self.file1_path}","{self.file2_path}","1.0","0.125","0.0","0.0"'
-        self.assertIn(expected_line, result)
-        self.assertIn("1.0", result)
+            result = tuple(map(lambda s: s.strip('"'), result.split('\n')[1].split(',')))
+            self.assertEqual(result[0],self.source_path)
+            self.assertEqual(result[1],self.encode_path)
+            self.assertEqual(result[2],self.decode_path)
+            self.assertAlmostEqual(float(result[3]),1/3)
+            self.assertAlmostEqual(float(result[4]),1/8)
+            self.assertAlmostEqual(float(result[5]),1.0, 3)
+            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
         print("Test 3 passed: Partially different files tested successfully.")
         print()
 
@@ -266,11 +273,11 @@ class TestCalculateErrorRate(unittest.TestCase):
         """
         print("Test 4: Testing file size mismatch case.")
         # 修改文件2的内容为两个字节
-        with open(self.file2_path, "wb") as file2:
+        with open(self.decode_path, "wb") as file2:
             file2.write(b"\xAA\xAA")
 
         try:
-            calcErrorRate.compare_files(self.file1_path, self.file1_path, self.file2_path, self.result_path)
+            calcErrorRate.compare_files(self.source_path, self.encode_path, self.decode_path, self.result_path, True)
             print("Expected ValueError was not raised for file size mismatch")
         except ValueError as e:
             print(f"Caught expected ValueError: {e}")
@@ -298,13 +305,11 @@ class TestCalculateErrorRate(unittest.TestCase):
         """
         print("Test 6: Testing empty files with 0.0 error rate.")
         # 创建空文件
-        with open(self.file1_path, "wb") as file1:
-            file1.write(b"")
-        with open(self.file2_path, "wb") as file2:
+        with open(self.decode_path, "wb") as file2:
             file2.write(b"")
 
         try:
-            calcErrorRate.compare_files(self.file1_path, self.file1_path, self.file2_path, self.result_path)
+            calcErrorRate.compare_files(self.source_path, self.decode_path, self.decode_path, self.result_path)
             print("Calculation completed without ZeroDivisionError for empty files")
         except ZeroDivisionError as e:
             print(f"Caught ZeroDivisionError: {e}")
@@ -315,7 +320,7 @@ class TestCalculateErrorRate(unittest.TestCase):
                 result = result_file.read().strip()
                 print(result)  # 打印实际结果以便调试
             # 检查 CSV 行是否包含正确的路径和其他数据
-            expected_line = f'"{self.file1_path}","{self.file1_path}","{self.file2_path}","0","nan","nan","nan"'
+            expected_line = f'"{self.source_path}","{self.decode_path}","{self.decode_path}","0","nan","1.0","nan"'
             self.assertIn(expected_line, result)
             print("Test 6 passed: Empty files tested successfully.")
         else:

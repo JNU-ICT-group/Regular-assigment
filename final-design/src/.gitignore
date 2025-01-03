@@ -3,5 +3,5 @@ BSC.*.dat
 DMS.*.dat
 HC.*.dat
 RC.*.dat
-DMS.p0=*.csv
+BSC.p=*.*.csv
 /data/case_*/

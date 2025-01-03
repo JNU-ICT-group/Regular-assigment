@@ -110,15 +110,17 @@ def compare_files(source_path, encode_path, decode_path, result_path, heading=Fa
     compression_ratio = len(source) / len(encoded) if len(encoded) > 0 else 0
 
     # 计算编码前信源信息传输率（信息比特/字节）
-    source_entropy = calc_entropy(calc_probability(source))     # 比特/字节
+    source_p = calc_probability(source)
+    source_entropy = calc_entropy(source_p)     # 比特/字节
     source_rate = source_entropy / 8 * 8                        # 定长
 
     # 计算编码后信源信息传输率（信息比特/字节）
-    encoded_entropy = calc_entropy(calc_probability(encoded))   # 比特/字节
+    encode_p = calc_probability(encoded)
+    encoded_entropy = calc_entropy(encode_p)   # 比特/字节
     encoded_rate = encoded_entropy / len(encoded) * len(source) # 重复编码
 
     if not os.path.isfile(result_path):
-        with open(result_path, 'a', newline='') as result_file:
+        with open(result_path, 'w', newline='') as result_file:
             result_file.write('"X(source)","Y(encoded)","Z(decoded)","compression ratio","error rate","R(X)bit/byte","R(Y)bit/byte"\n')
     # 保存结果到 CSV 文件
     with open(result_path, 'a', newline='') as result_file:
@@ -134,15 +136,22 @@ def compare_files(source_path, encode_path, decode_path, result_path, heading=Fa
         print(f'Encoded Transmission Rate (after encoding): {encoded_entropy:.6f} bits/byte')
 
 
-def calc_probability(data):
-    """计算每个字节的概率分布"""
+def read_input(in_file_name) -> (np.ndarray, int):
+    """使用numpy的fromfile函数读取文件并计算其信息熵"""
+    # 使用 numpy.fromfile 以无符号整数形式读取文件
+    arr = np.fromfile(in_file_name, dtype=np.uint8)
+    return arr, len(arr)
+
+
+def calc_probability(data) -> np.ndarray:
+    """计算每个字节的近似概率"""
     file_size = len(data)
-    byte_counts = np.histogram(data, bins=range(256))[0]
-    probability = byte_counts / file_size
+    byte_counts = np.histogram(data, bins=range(257))[0]
+    probability = np.divide(byte_counts, file_size, dtype=np.float32)
     return probability
 
 
-def calc_information(p):
+def calc_information(p: np.ndarray) -> np.ndarray:
     """计算每个字节的信息量（单位：比特）"""
     p = p.copy()
     np.clip(p, np.spacing(1), None, out=p)
@@ -150,8 +159,8 @@ def calc_information(p):
     return information
 
 
-def calc_entropy(p):
-    """计算信息熵"""
+def calc_entropy(p: np.ndarray) -> float:
+    """计算信息熵，即平均每个字节的信息量"""
     entropy = (p * calc_information(p)).sum()
     return entropy
 
