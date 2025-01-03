@@ -22,6 +22,7 @@ import argparse
 import numpy as np
 import csv
 
+bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
 
 def main(input_path, encode_path, output_path, **kwgs):
     input_paths = path_split(input_path)
@@ -51,10 +52,10 @@ def work_flow(input_path, encode_path, output_path, **kwgs):
     encoded, y_size = read_input(encode_path)
     header_size = kwgs['header_size']
     encoded, y_size = encoded[header_size:], y_size - header_size
-    p_source = calc_probability(source)
-    p_encode = calc_probability(encoded)
-    entropy_source = calc_entropy(p_source)     # bit/byte
-    entropy_encode = calc_entropy(p_encode)     # bit/byte
+    p_source0 = calc_prob0(calc_probability(source))
+    p_encode0 = calc_prob0(calc_probability(encoded))
+    entropy_source = calc_entropy(np.float32([p_source0, 1-p_source0])) * 8   # bit/byte
+    entropy_encode = calc_entropy(np.float32([p_encode0, 1-p_encode0])) * 8   # bit/byte
     ratio = calc_compress_ratio(x_size, y_size)
     avlen = calc_code_avlen(x_size, y_size)
     efficiency = calc_efficiency(ratio)
@@ -81,6 +82,10 @@ def calc_probability(data) -> np.ndarray:
     byte_counts = np.histogram(data, bins=range(257))[0]
     probability = np.divide(byte_counts, file_size, dtype=np.float32)
     return probability
+
+
+def calc_prob0(prob) -> float:
+    return 1. - (prob * bit_counts).sum() / 8
 
 
 def calc_information(p: np.ndarray) -> np.ndarray:

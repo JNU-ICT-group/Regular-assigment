@@ -209,8 +209,8 @@ class TestCalculateErrorRate(unittest.TestCase):
             self.assertEqual(result[2],self.source_path)
             self.assertAlmostEqual(float(result[3]),1/3)
             self.assertAlmostEqual(float(result[4]),0.0)
-            self.assertAlmostEqual(float(result[5]),1.0, 3)
-            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
+            self.assertAlmostEqual(float(result[5]),8.0, 3)
+            self.assertAlmostEqual(float(result[6]),8.0/3, 3)
         print("Test 1 passed: Identical files tested successfully.")
         print()
 
@@ -235,8 +235,8 @@ class TestCalculateErrorRate(unittest.TestCase):
             self.assertEqual(result[2],self.decode_path)
             self.assertAlmostEqual(float(result[3]),1/3)
             self.assertAlmostEqual(float(result[4]),1.0)
-            self.assertAlmostEqual(float(result[5]),1.0, 3)
-            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
+            self.assertAlmostEqual(float(result[5]),8.0, 3)
+            self.assertAlmostEqual(float(result[6]),8.0/3, 3)
         # 检查 CSV 行是否包含正确的路径和其他数据
         print("Test 2 passed: Different files tested successfully.")
         print()
@@ -262,8 +262,8 @@ class TestCalculateErrorRate(unittest.TestCase):
             self.assertEqual(result[2],self.decode_path)
             self.assertAlmostEqual(float(result[3]),1/3)
             self.assertAlmostEqual(float(result[4]),1/8)
-            self.assertAlmostEqual(float(result[5]),1.0, 3)
-            self.assertAlmostEqual(float(result[6]),1.0/3, 3)
+            self.assertAlmostEqual(float(result[5]),8.0, 3)
+            self.assertAlmostEqual(float(result[6]),8.0/3, 3)
         print("Test 3 passed: Partially different files tested successfully.")
         print()
 
@@ -320,7 +320,7 @@ class TestCalculateErrorRate(unittest.TestCase):
                 result = result_file.read().strip()
                 print(result)  # 打印实际结果以便调试
             # 检查 CSV 行是否包含正确的路径和其他数据
-            expected_line = f'"{self.source_path}","{self.decode_path}","{self.decode_path}","0","nan","1.0","nan"'
+            expected_line = f'"{self.source_path}","{self.decode_path}","{self.decode_path}","0","nan","8.0","nan"'
             self.assertIn(expected_line, result)
             print("Test 6 passed: Empty files tested successfully.")
         else:

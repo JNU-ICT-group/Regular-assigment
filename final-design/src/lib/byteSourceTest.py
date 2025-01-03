@@ -18,7 +18,6 @@ def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=10):
         bool: 测试是否通过。
     """
     # 写入临时CSV文件
-    temp_csv_path = "temp_prob_dist.csv"
     temp_info_path = "temp_info_stat.csv"
     # 生成临时输出文件路径
     temp_output_path = "temp_output.bin"
@@ -26,14 +25,10 @@ def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=10):
     # 删除临时文件
     if os.path.exists(temp_info_path):
         os.remove(temp_info_path)
-    with open(temp_csv_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for i, prob in enumerate(symbol_prob):
-            writer.writerow([i, prob])
 
     for _ in range(num_tests):
         # 调用算法函数生成符号序列
-        byteSource.main(temp_csv_path, temp_output_path, msg_len, message_state=0)
+        byteSource.work_flow(symbol_prob, temp_output_path, msg_len, message_state=0)
 
         arr, x_size = calcDMSInfo.read_input(temp_output_path)
         assert msg_len == x_size, 'Except to %d but %s' % (msg_len,x_size)
@@ -64,7 +59,6 @@ def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=10):
 
 
     # 删除临时文件
-    os.remove(temp_csv_path)
     os.remove(temp_output_path)
     os.remove(temp_prob_path)
     os.remove(temp_info_path)

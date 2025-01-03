@@ -5,6 +5,13 @@
 限制最大为256进制。
 
 v1.3 增加padding功能
+v1.4 改为无扩展二元信源
+模块输入
+	信源消息概率分布P(0)
+	消息序列的大小（字节）
+模块输出
+	信源输出消息序列文件
+
 """
 __version__ = '1.3'
 
@@ -13,33 +20,39 @@ import argparse
 import numpy as np
 import csv
 
+bit_counts = np.float32(bytearray(map(int.bit_count, range(256))))
 
-def main(input_path, output_path, msg_length, **kwgs):
-    input_paths = path_split(input_path)
+def generate(ones):
+    probs = []
+    for p in ones:
+        w1 = p ** bit_counts
+        w2 = (1-p) ** (8 - bit_counts)
+        probs.append(w1 * w2)
+    return probs
+
+
+def main(prob0s, output_path, msg_length, **kwgs):
+    ones = [1.-float(p0) for p0 in prob0s.split(',')]
+    prob0s = generate(ones)
     output_paths = path_split(output_path)
 
-    for (input_path, output_path) in zip(input_paths, output_paths):
+    for (prob, output_path) in zip(prob0s, output_paths):
         if kwgs['message_state']:
-            print('Processing "%s" ...' % input_path)
-        work_flow(input_path, output_path, msg_length, **kwgs)
+            print('Processing "%s" ...' % output_path)
+        work_flow(prob, output_path, msg_length, **kwgs)
 
 
-def work_flow(input_path, output_path, msg_length, **kwgs):
+def work_flow(symbol_prob, output_path, msg_length, **kwgs):
     if kwgs.get('base_path'):
-        input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
     if kwgs['message_state'] == 1:
-        print('Input path:', input_path)
         print('Output path:', output_path)
-    if not os.path.isfile(input_path):
-        raise RuntimeError("input_path must be an exist file.")
     if os.path.exists(output_path) and not os.path.isfile(output_path):
         raise RuntimeError("output_path must be a file, not a folder.")
 
     if msg_length<=0:
         raise ValueError("Message length must be a positive number.")
 
-    symbol_prob = read_input(input_path)          # do work for one single file `in_file`
     msg = random_sequence(symbol_prob, msg_length)
     pad_left, v1, pad_right, v2 = kwgs.get('pad', (0,0,0,0))
     if pad_left or pad_right:
@@ -119,7 +132,7 @@ def parse_sys_args() -> dict:
     Parse command line arguments using argparse and return a dictionary of arguments.
     """
     parser = argparse.ArgumentParser(description="Process some commands for calcInfo.")
-    parser.add_argument('input_path', help='Input file path')
+    parser.add_argument('--p0', help='Probability of binary-symbol 0.')
     parser.add_argument('output_path', help='Output file path')
     parser.add_argument('msg_length', type=int, help='Real Size of Sequence.')
     parser.add_argument('-p', type=lambda string: tuple(map(int, string[1:-1].split(','))), default=(0,0,0,0), help='Padding the two side with a const value, '
@@ -134,7 +147,7 @@ def parse_sys_args() -> dict:
     args = parser.parse_args()
 
     return dict(
-        input_path=args.input_path,
+        prob0s=args.p0,
         output_path=args.output_path,
         base_path=args.dir,
         pad=args.p,
@@ -161,5 +174,5 @@ if __name__ == "__main__":
         if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):
             raise RuntimeError("base-path must be an exist folder.")
 
-    if kwgs['input_path'] and kwgs['output_path']:
+    if kwgs['output_path']:
         main(**kwgs)

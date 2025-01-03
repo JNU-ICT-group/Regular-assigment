@@ -4,6 +4,13 @@ This program is intended for used in course, Principle of Information and Coding
 Usage details can be displayed by passing command line argument `--help`.
 
 Note: All information contents calculated are bit-wise, i.e. in (information-)bit per (binary-)bit.
+v1.2 改为无扩展二元信道
+模块输入
+	信道输入消息序列文件
+    错误传递概率p
+模块输出
+	信道输出消息序列文件
+
 """
 
 # Standard library
@@ -18,22 +25,34 @@ __email__ = "miracle@stu2022.jnu.edu.cn; "
 __version__ = "20241031.1001"
 
 
-def main(input_path, output_path, noise_path, **kwgs):
+bit_counts = np.float32(bytearray(map(int.bit_count, range(256))))
+
+def generate(ones):
+    probs = []
+    for p in ones:
+        w1 = p ** bit_counts
+        w2 = (1-p) ** (8 - bit_counts)
+        probs.append(w1 * w2)
+    return probs
+
+
+def main(input_path, output_path, noises, **kwgs):
     input_paths = path_split(input_path)
     output_paths = path_split(output_path)
-    noise_paths = path_split(noise_path)
+    ones = map(float, noises.split(','))
+    probs = generate(ones)
 
-    for input_path, noise_path, output_path in zip(input_paths, noise_paths, output_paths):
+    for input_path, noise, output_path, prob in zip(input_paths, noises, output_paths, probs):
         if kwgs.get('message_state'):
-            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%s"...' % (input_path, output_path, noise_path))
-        work_flow(input_path, output_path, noise_path, **kwgs)
+            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%.3f"...' % (input_path, output_path, float(noise)))
+        work_flow(input_path, output_path, prob, **kwgs)
 
 
 def path_split(path):
     return filter(None, map(str.strip, path.replace('"', '').replace("'", "").split(';')))
 
 
-def work_flow(input_path, output_path, noise_path, **kwgs):
+def work_flow(input_path, output_path, prob, **kwgs):
     if kwgs.get('base_path'):
         input_path = os.path.join(kwgs['base_path'], input_path)
         output_path = os.path.join(kwgs['base_path'], output_path)
@@ -44,16 +63,17 @@ def work_flow(input_path, output_path, noise_path, **kwgs):
         raise RuntimeError("input_path must be an exist file.")
     if os.path.exists(output_path) and not os.path.isfile(output_path):
         raise RuntimeError("output_path must be a file, not a folder.")
-    if not os.path.isfile(noise_path):
-        raise RuntimeError("noise_path must by an exist file.")
 
     if kwgs.get('message_state') == 1:
         print()
     arr = read_input(input_path)
-    noise = read_input(noise_path)
-    if len(arr)*8 != len(noise) and len(arr) != len(noise):
-        raise ValueError("NOISE must have the size 8-times longer than INPUT, "
-                         "while NOISE values only 1-bits.")
+    noise = random_sequence(prob, len(arr))
+    pad_left, v1, pad_right, v2 = kwgs.get('pad', (0,0,0,0))
+    if pad_left:
+        noise[:pad_left] = v1
+    if pad_right:
+        noise[-pad_right:] = v2
+
     out = generate_error_channel(arr, noise)
     write_output(output_path, out)
 
@@ -69,6 +89,27 @@ def read_input(input_path) -> np.ndarray:
         numpy.ndarray: 256元信源数据。
     """
     return np.fromfile(input_path, dtype=np.uint8)
+
+
+def random_sequence(symbol_prob, msg_len) -> np.ndarray:
+    """
+    使用 np.searchsorted 生成符合指定概率分布的随机序列（蒙特卡罗法）
+
+    Parameters:
+        symbol_prob (numpy.ndarray): 符号的概率分布。
+        msg_len (int): 生成的消息长度（符号数量）。
+
+    Returns:
+        numpy.ndarray: 生成的符号序列。
+    """
+    # 计算累积概率分布 F(i)
+    symbol_cumsum = symbol_prob.cumsum()
+
+    # 生成符合均匀分布的随机数，并通过累积概率分布查找对应符号
+    msg_len = int(msg_len)
+    symbol_random = np.random.uniform(size=msg_len)
+    msg = np.searchsorted(symbol_cumsum, symbol_random)
+    return msg.astype(np.uint8)
 
 
 def generate_error_channel(arr, noise) -> np.ndarray:
@@ -106,7 +147,7 @@ def parse_sys_args() -> dict:
     """
     parser = argparse.ArgumentParser(description="Process some commands for byteChannel.")
     parser.add_argument('INPUT', nargs='?', help='Input file path')
-    parser.add_argument('NOISE', nargs='?', help='Error transmission probability of BSC.')
+    parser.add_argument('p', help='Probability of Error-Rate.')
     parser.add_argument('OUTPUT', nargs='?', help='Output file path')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
@@ -116,7 +157,7 @@ def parse_sys_args() -> dict:
     args = parser.parse_args()
     return dict(
         input_path=args.INPUT,
-        noise_path=args.NOISE,
+        noises=args.p,
         output_path=args.OUTPUT,
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,

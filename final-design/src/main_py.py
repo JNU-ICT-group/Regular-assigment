@@ -19,7 +19,7 @@ import shutil
 import typing
 
 sys.path.append('.\\lib\\')
-from lib import (byteSource, byteChannel, generate, byteSourceCoder, repetitionCoder,
+from lib import (byteSource, byteChannel, byteSourceCoder, repetitionCoder,
                  calcDMSInfo, calcBSCInfo, calcCodecInfo, calcErrorRate, calcInfo)
 
 
@@ -29,9 +29,8 @@ class CASE_BASE(typing.TypedDict):
     channel_codec: bool
     error_rate: float
 
-cmd_source = byteSource.work_flow
-cmd_channel = byteChannel.work_flow
-cmd_DMS_create = generate.main
+cmd_source = byteSource.main
+cmd_channel = byteChannel.main
 cmd_codec_source = byteSourceCoder.main
 cmd_codec_channel = repetitionCoder.main
 cmd_calc_source = calcDMSInfo.main
@@ -99,15 +98,17 @@ for i,case in enumerate(cases):
 
     os.mkdir(case_path)
     # 信源
-    prob1 = [1. - case['prob0']]
-    source_csv_path = os.path.join(case_path, 'DMS.p0=%.3f.csv' % case['prob0'])
+    prob0 = str(case['prob0'])
     source_path = os.path.join(case_path, 'DMS.p0=%.3f.dat' % case['prob0'])
-    cmd_DMS_create(prob1, [source_csv_path])
-    cmd_source(source_csv_path, source_path, msg_length, message_state=verbose)
+    cmd_source(prob0, source_path, msg_length, message_state=verbose)
+    # 计算信源指标
+    source_pmf_path = os.path.join(case_path, 'DMS.p0=%.3f.csv' % case['prob0'])
+    cmd_calc_source(source_path, source_info_path, export_p=source_pmf_path, message_state=verbose)
+
     # 信源编码
     if case['source_codec']:
         source_codec_path = os.path.join(case_path, 'HC.en.p0={:.3f}.dat'.format(case['prob0']))
-        cmd_codec_source('encode', PMF=source_csv_path, INPUT=source_path, OUTPUT=source_codec_path, verbose=verbose)
+        cmd_codec_source('encode', PMF=source_pmf_path, INPUT=source_path, OUTPUT=source_codec_path, verbose=verbose)
         source_codec_header_path = source_codec_path
         source_codec_header = read_header_size(source_codec_path)
     else:
@@ -126,14 +127,10 @@ for i,case in enumerate(cases):
 
     # 噪声
     error_rate = case['error_rate']
-    noise_csv_path = os.path.join(case_path, 'BSC.p=%.3f.csv' % error_rate)
-    noise_path = os.path.join(case_path, 'BSC.p=%.3f.len=%d.dat' % (error_rate, channel_codec_length))
-    cmd_DMS_create([error_rate], [noise_csv_path])
-    cmd_source(noise_csv_path, noise_path, channel_codec_length,
-               pad=(channel_codec_header + repeat_length * source_codec_header,0,0,0), message_state=verbose)
     # 信道传输
     channel_path = os.path.join(case_path, 'BSC.p0=%.3f.p=%.3f.dat' % (case['prob0'], error_rate))
-    cmd_channel(channel_codec_path, channel_path, noise_path, message_state=verbose)
+    cmd_channel(channel_codec_path, channel_path, str(error_rate),
+               pad=(channel_codec_header + repeat_length * source_codec_header,0,0,0), message_state=verbose)
 
     # 信道解码
     if case['channel_codec']:
@@ -149,8 +146,6 @@ for i,case in enumerate(cases):
         source_decode_path = channel_decode_path
 
     # 计算实测指标
-    source_pmf_path = os.path.join(case_path, 'DMS.pmf.p0=%.3f.csv' % case['prob0'])
-    cmd_calc_source(source_path, source_info_path, export_p=source_pmf_path, message_state=verbose)
     cmd_calc_channel(channel_codec_path, channel_path, channel_info_path, verbose=verbose)
     cmd_calc_codec_channel(source_codec_path, channel_codec_path, channel_decode_path, channel_codec_info_path,
                         case['channel_codec'], verbose)

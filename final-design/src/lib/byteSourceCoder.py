@@ -75,8 +75,10 @@ def encode(pmf_file_name, in_file_name, out_file_name, byteorder = 'little'):
         return 0, 0
     # 读取概率质量函数文件，构建符号的概率字典
     with open(pmf_file_name, newline='') as csv_file:
+        pmf = {np.uint8(row): 0. for row in range(256)}
         # 读取符号和概率，形成字典
-        pmf = {np.uint8(row[0]): float(row[1]) for row in csv.reader(csv_file)}
+        for row in csv.reader(csv_file):
+            pmf[np.uint8(row[0])] = float(row[1])
     # if not np.isclose(sum(pmf.values()), 0, 1e-5):
     #     raise ValueError("PMF must have summary close to 1, but got %.8f." % sum(pmf.values()))
     codec = HuffmanCodec.from_frequencies(pmf)  # 使用给定的频率表构建霍夫曼编码器

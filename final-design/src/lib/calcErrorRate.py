@@ -39,6 +39,7 @@ __author__ = "Zhang, Pengyang; Chen, Jin; "
 __email__ = "miracle@stu2022.jnu.edu.cn"
 __version__ = "20241212.2220"
 
+bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
 
 def main():
     parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
@@ -110,13 +111,13 @@ def compare_files(source_path, encode_path, decode_path, result_path, heading=Fa
     compression_ratio = len(source) / len(encoded) if len(encoded) > 0 else 0
 
     # 计算编码前信源信息传输率（信息比特/字节）
-    source_p = calc_probability(source)
-    source_entropy = calc_entropy(source_p)     # 比特/字节
+    source_p0 = calc_prob0(calc_probability(source))
+    source_entropy = calc_entropy(np.float32([source_p0, 1-source_p0])) * 8     # 比特/字节
     source_rate = source_entropy / 8 * 8                        # 定长
 
     # 计算编码后信源信息传输率（信息比特/字节）
-    encode_p = calc_probability(encoded)
-    encoded_entropy = calc_entropy(encode_p)   # 比特/字节
+    encode_p0 = calc_prob0(calc_probability(encoded))
+    encoded_entropy = calc_entropy(np.float32([encode_p0, 1-encode_p0])) * 8   # 比特/字节
     encoded_rate = encoded_entropy / len(encoded) * len(source) # 重复编码
 
     if not os.path.isfile(result_path):
@@ -142,6 +143,8 @@ def read_input(in_file_name) -> (np.ndarray, int):
     arr = np.fromfile(in_file_name, dtype=np.uint8)
     return arr, len(arr)
 
+def calc_prob0(prob) -> float:
+    return 1. - (prob * bit_counts).sum() / 8
 
 def calc_probability(data) -> np.ndarray:
     """计算每个字节的近似概率"""
@@ -188,8 +191,8 @@ def theoryCalcError(n, p):
 
 # 测试函数
 def test():
-    import calcErrorRateTest
-    unittest.main(calcErrorRateTest, argv=['calcErrorRateTest'])
+    import repetitionCoderTest
+    unittest.main(repetitionCoderTest, argv=['repetitionCoderTest'])
 
 
 if __name__ == '__main__':

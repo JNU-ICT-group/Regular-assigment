@@ -3,7 +3,7 @@ import byteChannel
 import numpy as np
 
 
-def quick_test(input_path, output_path, noise_path) -> bool:
+def quick_test(input_path, output_path, noise) -> bool:
     """
     快速测试生成符号序列的概率分布是否符合给定的概率分布。
 
@@ -11,21 +11,18 @@ def quick_test(input_path, output_path, noise_path) -> bool:
         bool: 测试是否通过。
     """
 
-    byteChannel.work_flow(input_path, output_path, noise_path)
+    byteChannel.main(input_path, output_path, str(noise))
     input_data = byteChannel.read_input(input_path)
-    noise_data = byteChannel.read_input(noise_path)
     output_data = byteChannel.read_input(output_path)
     # 逐位比较并统计不同位的数量
     test_differences = np.bitwise_xor(input_data, output_data)
-    real_differences = noise_data
     test_error_count = np.unpackbits(test_differences).sum(dtype=np.uint32)
-    real_error_count = np.unpackbits(real_differences).sum(dtype=np.uint32)
 
     # 计算错误率
     total_bits = len(output_data) * 8  # 每个 uint8 有 8 位
     test_error_rate = test_error_count / total_bits
-    real_error_rate = real_error_count / total_bits
-    if test_error_rate == real_error_rate:
+    real_error_rate = noise
+    if abs(test_error_rate - real_error_rate) < 1e-2:
         print("错误传输概率：", test_error_rate)
     else:
         print("错误传输概率：%f 实测：%f，测试不通过" % (real_error_rate,  test_error_rate))
@@ -33,7 +30,7 @@ def quick_test(input_path, output_path, noise_path) -> bool:
     return True
 
 
-def test_flow(msg_len=100000) -> None:
+def test_flow(msg_len=10000) -> None:
     """
 
     Parameters:
@@ -121,13 +118,16 @@ def test_flow(msg_len=100000) -> None:
         generate_half_zeros_half_ones(msg_len),
         generate_alternating_zeros_ones(msg_len)
     ]
+    noises = [
+        0, 0.5, 1
+    ]
     all_tests_passed = True
 
     for i, file1 in enumerate(files):
-        for j, file2 in enumerate(files):
-            print(f"Processing files:H(X) {file_names[i]} and H(N){file_names[j]}")
+        for j, noise in enumerate(noises):
+            print(f"Processing files:H(X) {file_names[i]} and p {noise}")
             output_file = f'outfile{i}{j}.dat'
-            all_tests_passed &= quick_test(file1, output_file, file2)
+            all_tests_passed &= quick_test(file1, output_file, noise)
             delete_temp_file(output_file)
 
     # 删除所有输出文件
