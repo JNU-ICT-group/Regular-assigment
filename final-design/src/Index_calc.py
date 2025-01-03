@@ -98,6 +98,7 @@ def calc_huffman_encoded_entropy(encoded_file):
     
     return entropy
 
+
 def read_input(in_file_name) -> (np.ndarray, int):
     """使用numpy的fromfile函数读取文件并计算其信息熵"""
     # 使用 numpy.fromfile 以无符号整数形式读取文件
@@ -121,6 +122,7 @@ def generate_error_channel(arr, noise) -> np.ndarray:
         noise = np.packbits(noise)
     out = np.bitwise_xor(arr, noise)
     return out
+
 
 ##############################################################################
 # 2.1.2. 信源指标计算模块
@@ -147,7 +149,9 @@ def calc_dms_info(source_file: str,
     prob_256 = calc_probability(data)
     # 导出 256 元分布 (可选)
     if export_256_csv:
+
         write_export(export_256_csv , prob_256)
+
 
     # 计算二元信息熵 (bit/二元消息)
     p0 = calc_prob0(prob_256)
@@ -173,6 +177,7 @@ def calc_dms_info(source_file: str,
 ##############################################################################
 # 2.2.2. 信道指标计算模块
 ##############################################################################
+
 
 noise = read_input(noise_path)
 noise_file = generate_error_channel(arr, noise)
@@ -274,18 +279,22 @@ def calc_channel_info(channel_in_file: str,
         I_bit = I_256 / 8.0
 
     # ========== 6) 写结果到 CSV ==========
+
     need_header = not os.path.isfile(channel_info_csv)
     with open(channel_info_csv, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
         if need_header:
             writer.writerow([
+
                 "channel_in_file", "channel_out_file", "noise_file",
                 "H_in(bit/二元)", "H_out(bit/二元)", "I(bit/二元)",
                 "length_in(bytes)", "length_out(bytes)", "p"
+
             ])
         row = [
             channel_in_file,
             channel_out_file,
+
             noise_file,
             f"{H_in_bit:.6f}",
             f"{H_out_bit:.6f}",
@@ -293,6 +302,7 @@ def calc_channel_info(channel_in_file: str,
             f"{len_in}",
             f"{len_out}",
             f"{p:.8f}"
+
         ]
         writer.writerow(row)
 
@@ -301,12 +311,15 @@ def calc_channel_info(channel_in_file: str,
 ##############################################################################
 
 def calc_source_codec_info(before_file: str,
+
                            pmf_file_name: str,
                            after_file: str,
+
                            source_codec_info_csv: str):
     """
     输入:
       - before_file: 编码前文件(原始)
+
       - pmf_file_name: PMF（概率质量函数）CSV 文件，用于构建霍夫曼编码器
       - after_file: 编码后文件
     输出:
@@ -371,6 +384,7 @@ def calc_source_codec_info(before_file: str,
     H_after = calc_huffman_encoded_entropy(after_file)
 
     # >>> 3. 写入结果 CSV <<<
+
     need_header = not os.path.isfile(source_codec_info_csv)
     with open(source_codec_info_csv, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
@@ -379,7 +393,9 @@ def calc_source_codec_info(before_file: str,
                 "before_file", "after_file",
                 "compression_ratio",
                 "avg_code_len(bit/origin_byte)",
+
                 "codec_efficiency(%)",
+
                 "H_before(bit/byte)",
                 "H_after(bit/byte)",
                 "length_before(bytes)",
@@ -391,12 +407,16 @@ def calc_source_codec_info(before_file: str,
             f"{ratio:.6f}",
             f"{avlen:.6f}",
             f"{efficiency:.6f}",
+
             f"{H_before:.6f}",
             f"{H_after:.6f}",
+
             f"{len_b}",
             f"{len_a}"
         ]
         writer.writerow(row)
+
+
 
 
 ##############################################################################
@@ -509,6 +529,8 @@ def main():
     channel_decode_file= os.path.join(data_dir, "RC.de.p0=0.1.p=0.01.dat")
 
 
+
+
     # (1) 2.1.2. 信源指标: dms_info.csv
     dms_info_csv = os.path.join(data_dir, "DMS.info.csv")
     dms_256_csv  = os.path.join(data_dir, "DMS.256dist.csv")
@@ -520,8 +542,10 @@ def main():
 
     # (3) 2.3.3. 信源编码指标: HC.info.csv
     source_codec_info_csv = os.path.join(data_dir, "HC.info.csv")
+
     parser_encode.add_argument('PMF', type=str, help='Path to probability mass function CSV file')
     calc_source_codec_info(source_file, source_codec_file,pmf_file_name, source_codec_info_csv)
+
 
     # (4) 2.4.3. 信道编解码指标: RC.info.csv
     channel_codec_info_csv = os.path.join(data_dir, "RC.info.csv")
