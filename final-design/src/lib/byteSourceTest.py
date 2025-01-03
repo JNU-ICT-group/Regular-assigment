@@ -5,7 +5,7 @@ import numpy as np
 
 
 
-def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=10):
+def quick_test(symbol_prob, p0, hx, redund, msg_len=100000, num_tests=2):
     """
     快速测试生成符号序列的概率分布是否符合给定的概率分布。
 

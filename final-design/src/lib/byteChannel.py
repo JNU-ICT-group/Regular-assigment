@@ -39,12 +39,12 @@ def generate(ones):
 def main(input_path, output_path, noises, **kwgs):
     input_paths = path_split(input_path)
     output_paths = path_split(output_path)
-    ones = map(float, noises.split(','))
+    ones = tuple(map(float, noises.split(',')))
     probs = generate(ones)
 
-    for input_path, noise, output_path, prob in zip(input_paths, noises, output_paths, probs):
+    for input_path, noise, output_path, prob in zip(input_paths, ones, output_paths, probs):
         if kwgs.get('message_state'):
-            print('Processing INPUT "%s" OUTPUT "%s" with NOISE "%.3f"...' % (input_path, output_path, float(noise)))
+            print('Processing INPUT "%s" OUTPUT "%s" with NOISE %.3f...' % (input_path, output_path, noise))
         work_flow(input_path, output_path, prob, **kwgs)
 
 
@@ -147,7 +147,7 @@ def parse_sys_args() -> dict:
     """
     parser = argparse.ArgumentParser(description="Process some commands for byteChannel.")
     parser.add_argument('INPUT', nargs='?', help='Input file path')
-    parser.add_argument('p', help='Probability of Error-Rate.')
+    parser.add_argument('p', nargs='?', help='Probability of Error-Rate.')
     parser.add_argument('OUTPUT', nargs='?', help='Output file path')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
     parser.add_argument('-O', action='store_true', help='Full prompt output')

@@ -44,10 +44,10 @@ bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
 def main():
     parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
 
-    parser.add_argument('SOURCE', type=str, help='path to input file 1 (before encoding)')
-    parser.add_argument('ENCODE', type=str, help='path to input file 2 (after encoding)')
-    parser.add_argument('DECODE', type=str, help='path to input file 3 (after decoding)')
-    parser.add_argument('RESULT', type=str, nargs='?', help='path to the result CSV file')
+    parser.add_argument('SOURCE', nargs='?', help='path to input file 1 (before encoding)')
+    parser.add_argument('ENCODE', nargs='?', help='path to input file 2 (after encoding)')
+    parser.add_argument('DECODE', nargs='?', help='path to input file 3 (after decoding)')
+    parser.add_argument('RESULT', nargs='?', help='path to the result CSV file')
     parser.add_argument('--header', action='store_true', help='Disable consider the header')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')

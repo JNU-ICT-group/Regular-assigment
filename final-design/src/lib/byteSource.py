@@ -133,8 +133,8 @@ def parse_sys_args() -> dict:
     """
     parser = argparse.ArgumentParser(description="Process some commands for calcInfo.")
     parser.add_argument('--p0', help='Probability of binary-symbol 0.')
-    parser.add_argument('output_path', help='Output file path')
-    parser.add_argument('msg_length', type=int, help='Real Size of Sequence.')
+    parser.add_argument('output_path', nargs='?', help='Output file path')
+    parser.add_argument('msg_length', nargs='?', type=int, help='Real Size of Sequence.')
     parser.add_argument('-p', type=lambda string: tuple(map(int, string[1:-1].split(','))), default=(0,0,0,0), help='Padding the two side with a const value, '
                         'like (pad-left,bool,pad-right,bool).')
     parser.add_argument('-d', '--dir', type=str, help='Base directory path')
@@ -151,7 +151,6 @@ def parse_sys_args() -> dict:
         output_path=args.output_path,
         base_path=args.dir,
         pad=args.p,
-        show_help=False,
         show_version=args.version,
         test_flow=args.test,
         message_state=1 if args.O else 2 if args.S else 0,
@@ -167,12 +166,12 @@ if __name__ == "__main__":
         print(__version__)
 
     if kwgs['test_flow']:
-        import byteChannelTest
-        byteChannelTest.test_flow()
+        import byteSourceTest
+        byteSourceTest.test_flow()
 
     if kwgs['base_path']:
         if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):
             raise RuntimeError("base-path must be an exist folder.")
 
-    if kwgs['output_path']:
+    if kwgs['output_path'] and kwgs['msg_length']:
         main(**kwgs)

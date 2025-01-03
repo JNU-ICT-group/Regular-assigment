@@ -125,6 +125,12 @@ def write_output(out_file_name, in_file_name, encode_file_name, info):
         writer.writerow(row)
 
 
+def test_flow():
+    import byteSourceCoderTest
+    byteSourceCoderTest.test_flow()
+    exit(0)
+
+
 def parse_sys_args() -> dict:
     """
     Parse command line arguments using argparse and return a dictionary of arguments.
@@ -138,6 +144,7 @@ def parse_sys_args() -> dict:
     parser.add_argument('--depth', type=int, default=1, help='Folder traversal depth (default: 1)')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
     parser.add_argument('-S', action='store_true', help='Weak prompt output')
+    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
 
     args = parser.parse_args()
 
@@ -146,6 +153,7 @@ def parse_sys_args() -> dict:
         encode_path=args.ENCODE,
         header_size=args.p,
         base_path=args.dir,
+        test_flow=args.test,
         message_state=1 if args.O else 2 if args.S else 0,
         depth=args.depth,
         output_path=args.OUTPUT,
@@ -154,6 +162,9 @@ def parse_sys_args() -> dict:
 
 if __name__ == "__main__":
     kwgs = parse_sys_args()
+
+    if kwgs['test_flow']:
+        test_flow()
 
     if kwgs['base_path']:
         if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):

@@ -25,10 +25,7 @@ __email__ = "miracle@stu2022.jnu.edu.cn"
 __version__ = "20241212.2220"
 
 
-def main(command, *, LEN=None, INPUT=None, OUTPUT=None, test=False, verbose=False):
-    if test:
-        return test_flow()
-
+def main(command, *, LEN=None, INPUT=None, OUTPUT=None, verbose=False):
     INPUT = path_split(INPUT)
     OUTPUT = path_split(OUTPUT)
 
@@ -151,7 +148,7 @@ def decode(input_path, output_path):
 def test_flow():
     import unittest
     import repetitionCoderTest
-    unittest.main(repetitionCoderTest, argv=['repetitionCoderTest'], exit=False)
+    unittest.main(repetitionCoderTest, argv=['repetitionCoderTest'], exit=True)
 
 
 def parse_cmd_args():
@@ -160,25 +157,27 @@ def parse_cmd_args():
 
     # Encode sub-command
     parser_encode = subparsers.add_parser('encode', help='Encode a source file')
-    parser_encode.add_argument('LEN', type=int, help='int, code length n, must be odd number and 2 < n < 10')
-    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
-    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
+    parser_encode.add_argument('LEN', type=int, nargs='?', help='int, code length n, must be odd number and 2 < n < 10')
+    parser_encode.add_argument('INPUT', nargs='?', help='Path to the encoder input file')
+    parser_encode.add_argument('OUTPUT', nargs='?', help='Path to the encoder output file')
 
     # Decode sub-command
     parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
-    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
-    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
+    parser_decode.add_argument('INPUT', nargs='?', help='Path to the decoder input file')
+    parser_decode.add_argument('OUTPUT', nargs='?', help='Path to the decoder output file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
 
     args = parser.parse_args()
+    if args.test:
+        return test_flow()
+
     return dict(
         command=args.command,
         LEN=args.LEN,
         INPUT=args.INPUT,
         OUTPUT=args.OUTPUT,
-        test=args.test,
         verbose=args.verbose
     )
 

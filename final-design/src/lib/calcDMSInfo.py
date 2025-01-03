@@ -152,7 +152,7 @@ def write_output(out_file_name, in_file_name, info, x_size):
 def write_export(out_file_name, x):
     with open(out_file_name, 'w', newline='', encoding='utf-8') as out_file:
         write = csv.writer(out_file, quoting=csv.QUOTE_NONE)
-        write.writerows([int(i), '%.8f' % p] for i, p in enumerate(x) if p)
+        write.writerows([int(i), p] for i, p in enumerate(x) if p)
 
 
 def parse_sys_args() -> dict:
@@ -166,6 +166,7 @@ def parse_sys_args() -> dict:
     parser.add_argument('--depth', type=int, default=1, help='Folder traversal depth (default: 1)')
     parser.add_argument('-O', action='store_true', help='Full prompt output')
     parser.add_argument('-S', action='store_true', help='Weak prompt output')
+    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('--export-p', type=str, help='Probability information output path')
 
     args = parser.parse_args()
@@ -176,12 +177,17 @@ def parse_sys_args() -> dict:
         base_path=args.dir,
         message_state=1 if args.O else 2 if args.S else 0,
         depth=args.depth,
+        test_flow=args.test,
         export_p=args.export_p,
     )
 
 
 if __name__ == "__main__":
     kwgs = parse_sys_args()
+
+    if kwgs['test_flow']:
+        import byteSourceTest
+        byteSourceTest.test_flow()
 
     if kwgs['base_path']:
         if not os.path.exists(kwgs['base_path']) or os.path.isfile(kwgs['base_path']):

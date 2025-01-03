@@ -123,12 +123,12 @@ def test_flow(msg_len=10000) -> None:
     ]
     all_tests_passed = True
 
+    output_file = f'outfile.dat'
     for i, file1 in enumerate(files):
         for j, noise in enumerate(noises):
             print(f"Processing files:H(X) {file_names[i]} and p {noise}")
-            output_file = f'outfile{i}{j}.dat'
             all_tests_passed &= quick_test(file1, output_file, noise)
-            delete_temp_file(output_file)
+    delete_temp_file(output_file)
 
     # 删除所有输出文件
     for file in files:

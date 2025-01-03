@@ -36,7 +36,7 @@ __email__ = "tguojiangling@jnu.edu.cn"
 __version__ = "20201111.1702"
 
 
-def main(command, *, PMF=None, INPUT=None, OUTPUT=None, SOURCE=None, test=False, verbose=False):
+def main(command, *, PMF=None, INPUT=None, OUTPUT=None, SOURCE=None, verbose=False):
     # Execute based on sub-command
     if command == 'encode':
         if verbose:
@@ -61,9 +61,6 @@ def main(command, *, PMF=None, INPUT=None, OUTPUT=None, SOURCE=None, test=False,
         compare_file(SOURCE, OUTPUT)
         if verbose:
             print('')
-
-    elif test:
-        test_flow()
 
 
 # 编码函数
@@ -162,11 +159,10 @@ def compare_file(file_name_1, file_name_2):
     return diff_total
 
 
-# 测试函数
 def test_flow():
-    import unittest
     import byteSourceCoderTest
-    unittest.main(byteSourceCoderTest, argv=['byteSourceCoderTest'], exit=False)
+    byteSourceCoderTest.test_flow()
+    exit(0)
 
 
 def parse_cmd_args():
@@ -175,31 +171,33 @@ def parse_cmd_args():
 
     # Encode sub-command
     parser_encode = subparsers.add_parser('encode', help='Encode a source file')
-    parser_encode.add_argument('PMF', type=str, help='Path to probability mass function CSV file')
-    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
-    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
+    parser_encode.add_argument('PMF', nargs='?', help='Path to probability mass function CSV file')
+    parser_encode.add_argument('INPUT', nargs='?', help='Path to the encoder input file')
+    parser_encode.add_argument('OUTPUT', nargs='?', help='Path to the encoder output file')
 
     # Decode sub-command
     parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
-    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
-    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
+    parser_decode.add_argument('INPUT',  nargs='?', help='Path to the decoder input file')
+    parser_decode.add_argument('OUTPUT',  nargs='?', help='Path to the decoder output file')
 
     # Compare sub-command
     parser_compare = subparsers.add_parser('compare', help='Compare source file and decoded file')
-    parser_compare.add_argument('SOURCE', type=str, help='Path to the source file')
-    parser_compare.add_argument('OUTPUT', type=str, help='Path to the decoded file')
+    parser_compare.add_argument('SOURCE',  nargs='?', help='Path to the source file')
+    parser_compare.add_argument('OUTPUT',  nargs='?', help='Path to the decoded file')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
 
     args = parser.parse_args()
+    if args.test:
+        test_flow()
+
     return dict(
         command=args.command,
         PMF=args.PMF,
         INPUT=args.INPUT,
         OUTPUT=args.OUTPUT,
         SOURCE=args.SOURCE,
-        test=args.test,
         verbose=args.verbose,
     )
 
