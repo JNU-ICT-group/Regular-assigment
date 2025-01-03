@@ -3,8 +3,10 @@ import os
 import csv
 import numpy as np
 from byteSourceCoder import encode, decode, compare_file
+import calcCodecInfo
 
 
+# 测试模块
 def test_once(pmf_file_name, source_file_name, encoded_file_name, decoded_file_name):
     print('Encoding...')
     (source_len, encoded_len) = encode(pmf_file_name, source_file_name, encoded_file_name)
@@ -29,7 +31,7 @@ class TestByteSourceCoder(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # 设置测试数据目录和文件路径
-        cls.test_data_dir = 'test-data'
+        cls.test_data_dir = 'test-data1'
         cls.pmf_file_name = os.path.join(cls.test_data_dir, 'pmf.csv')
         cls.source_file_name = os.path.join(cls.test_data_dir, 'source.dat')
         cls.encoded_file_name = os.path.join(cls.test_data_dir, '_encoded.tmp')
@@ -53,7 +55,6 @@ class TestByteSourceCoder(unittest.TestCase):
 
     def test_uniform_distribution(self):
         # 生成测试源文件（模拟数据）
-        # np.random.seed(42)
         data = np.random.randint(0, 256, size=64 * 1024, dtype=np.uint8)
         data.tofile(self.source_file_name)
 
@@ -76,11 +77,9 @@ class TestByteSourceCoder(unittest.TestCase):
         # 测试源文件和解码文件的比较
         diff_total = test_once(self.pmf_file_name, self.source_file_name, self.encoded_file_name, self.decoded_file_name)
         self.assertEqual(diff_total, 0, "源文件和解码文件应完全相同")
-        pass
 
     def test_unmapped_distribution(self):
         # 生成测试源文件（模拟数据）
-        # np.random.seed(42)
         data = np.random.randint(0, 256, size=64 * 1024, dtype=np.uint8)
         data.tofile(self.source_file_name)
 

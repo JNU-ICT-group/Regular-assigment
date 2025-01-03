@@ -30,8 +30,8 @@ import argparse
 import numpy as np
 import csv
 
+from generate import bit_counts
 
-bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
 
 def main(source_info, source_codec_info, channel_codec_info, output_path, **kwgs):
     if kwgs.get('base_path'):

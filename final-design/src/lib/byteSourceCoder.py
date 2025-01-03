@@ -36,60 +36,34 @@ __email__ = "tguojiangling@jnu.edu.cn"
 __version__ = "20201111.1702"
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
-    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
-
-    # Encode sub-command
-    parser_encode = subparsers.add_parser('encode', help='Encode a source file')
-    parser_encode.add_argument('PMF', type=str, help='Path to probability mass function CSV file')
-    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
-    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
-
-    # Decode sub-command
-    parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
-    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
-    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
-
-    # Compare sub-command
-    parser_compare = subparsers.add_parser('compare', help='Compare source file and decoded file')
-    parser_compare.add_argument('SOURCE', type=str, help='Path to the source file')
-    parser_compare.add_argument('OUTPUT', type=str, help='Path to the decoded file')
-
-    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
-
-    args = parser.parse_args()
-
+def main(command, *, PMF=None, INPUT=None, OUTPUT=None, SOURCE=None, test=False, verbose=False):
     # Execute based on sub-command
-    if args.command == 'encode':
-        if args.verbose:
-            print('Encoding %s (PMF=%s) ...' % (os.path.basename(args.INPUT), os.path.basename(args.PMF)))
-        (source_len, encoded_len) = encode(args.PMF, args.INPUT, args.OUTPUT)
-        if args.verbose:
+    if command == 'encode':
+        if verbose:
+            print('Encoding %s (PMF=%s) ...' % (os.path.basename(INPUT), os.path.basename(PMF)))
+        (source_len, encoded_len) = encode(PMF, INPUT, OUTPUT)
+        if verbose:
             print(f'\t Source len: {source_len} B')
             print(f'\tEncoded len: {encoded_len} B')
             print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
 
-    elif args.command == 'decode':
-        if args.verbose:
-            print('Decoding %s ...' % os.path.basename(args.INPUT))
-        (encoded_len, decoded_len) = decode(args.INPUT, args.OUTPUT)
-        if args.verbose:
+    elif command == 'decode':
+        if verbose:
+            print('Decoding %s ...' % os.path.basename(INPUT))
+        (encoded_len, decoded_len) = decode(INPUT, OUTPUT)
+        if verbose:
             print(f'\tEncoded len: {encoded_len} B')
             print(f'\tDecoded len: {decoded_len} B')
 
-    elif args.command == 'compare':
-        if args.verbose:
+    elif command == 'compare':
+        if verbose:
             print('Comparing source "%s" and decoded "%s" ...' % (os.path.basename(args.SOURCE), os.path.basename(args.OUTPUT)))
-        compare_file(args.SOURCE, args.OUTPUT)
-        if args.verbose:
+        compare_file(SOURCE, OUTPUT)
+        if verbose:
             print('')
 
-    elif args.test:
-        test()
-    else:
-        parser.print_help()
+    elif test:
+        test_flow()
 
 
 # 编码函数
@@ -187,12 +161,48 @@ def compare_file(file_name_1, file_name_2):
 
 
 # 测试函数
-def test():
+def test_flow():
     import unittest
     import byteSourceCoderTest
     unittest.main(byteSourceCoderTest, argv=['byteSourceCoderTest'], exit=False)
 
 
+def parse_cmd_args():
+    parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
+    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
+
+    # Encode sub-command
+    parser_encode = subparsers.add_parser('encode', help='Encode a source file')
+    parser_encode.add_argument('PMF', type=str, help='Path to probability mass function CSV file')
+    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
+    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
+
+    # Decode sub-command
+    parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
+    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
+    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
+
+    # Compare sub-command
+    parser_compare = subparsers.add_parser('compare', help='Compare source file and decoded file')
+    parser_compare.add_argument('SOURCE', type=str, help='Path to the source file')
+    parser_compare.add_argument('OUTPUT', type=str, help='Path to the decoded file')
+
+    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
+
+    args = parser.parse_args()
+    return dict(
+        command=args.command,
+        PMF=args.PMF,
+        INPUT=args.INPUT,
+        OUTPUT=args.OUTPUT,
+        SOURCE=args.SOURCE,
+        test=args.test,
+        verbose=args.verbose,
+    )
+
+
 # 主程序入口
 if __name__ == '__main__':
-    main()
+    kwgs = parse_cmd_args()
+    main(**kwgs)

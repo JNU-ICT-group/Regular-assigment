@@ -47,7 +47,7 @@ def main():
     parser.add_argument('ENCODE', type=str, help='path to input file 2 (after encoding)')
     parser.add_argument('DECODE', type=str, help='path to input file 3 (after decoding)')
     parser.add_argument('RESULT', type=str, nargs='?', help='path to the result CSV file')
-    parser.add_argument('--no-header', action='store_false', help='Disable consider the header')
+    parser.add_argument('--header', action='store_true', help='Disable consider the header')
 
     parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
     parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
@@ -63,7 +63,7 @@ def main():
     for source_path, encode_path, decode_path in zip(SOURCE, ENCODE, DECODE):
         if args.verbose:
             print(f'Comparing source "{os.path.basename(source_path)}", encoded "{os.path.basename(encode_path)}", and decoded "{os.path.basename(decode_path)}" ...')
-        compare_files(source_path, encode_path, decode_path, args.RESULT, args.no_header, args.verbose)
+        compare_files(source_path, encode_path, decode_path, args.RESULT, args.header, args.verbose)
         if args.verbose:
             print('')
 

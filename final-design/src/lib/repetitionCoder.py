@@ -13,10 +13,9 @@ Note: This program is intended for use in course, Principle of Information and C
 
 """
 
-import csv
 import os
 import argparse
-import bitstring
+# import bitstring
 
 # Non-standard library
 import numpy as np
@@ -26,53 +25,33 @@ __email__ = "miracle@stu2022.jnu.edu.cn"
 __version__ = "20241212.2220"
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
-    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
+def main(command, *, LEN=None, INPUT=None, OUTPUT=None, test=False, verbose=False):
+    if test:
+        return test_flow()
 
-    # Encode sub-command
-    parser_encode = subparsers.add_parser('encode', help='Encode a source file')
-    parser_encode.add_argument('LEN', type=int, help='int, code length n, must be odd number and 2 < n < 10')
-    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
-    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
-
-    # Decode sub-command
-    parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
-    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
-    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
-
-    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
-
-    args = parser.parse_args()
-    if args.test:
-        return test()
-
-    INPUT = path_split(args.INPUT)
-    OUTPUT = path_split(args.OUTPUT)
+    INPUT = path_split(INPUT)
+    OUTPUT = path_split(OUTPUT)
 
     # Execute based on sub-command
-    if args.command == 'encode':
+    if command == 'encode':
         for INPUT, OUTPUT in zip(INPUT, OUTPUT):
-            if args.verbose:
-                print('Encoding %s (repeats=%d) ...' % (os.path.basename(INPUT), args.LEN))
-            (source_len, encoded_len) = encode(args.LEN, INPUT, OUTPUT)
-            if args.verbose:
+            if verbose:
+                print('Encoding %s (repeats=%d) ...' % (os.path.basename(INPUT), LEN))
+            (source_len, encoded_len) = encode(LEN, INPUT, OUTPUT)
+            if verbose:
                 print(f'\t Source len: {source_len} B')
                 print(f'\tEncoded len: {encoded_len} B')
                 print(f'\tCompression ratio: {source_len / encoded_len if encoded_len else np.nan:.4f}')
 
-    elif args.command == 'decode':
+    elif command == 'decode':
         for INPUT, OUTPUT in zip(INPUT, OUTPUT):
-            if args.verbose:
+            if verbose:
                 print('Decoding %s ...' % os.path.basename(INPUT))
             (encoded_len, decoded_len) = decode(INPUT, OUTPUT)
-            if args.verbose:
+            if verbose:
                 print(f'\tEncoded len: {encoded_len} B')
                 print(f'\tDecoded len: {decoded_len} B')
 
-    else:
-        parser.print_help()
 
 
 def path_split(path):
@@ -169,12 +148,42 @@ def decode(input_path, output_path):
 
 
 # 测试函数
-def test():
+def test_flow():
     import unittest
     import repetitionCoderTest
     unittest.main(repetitionCoderTest, argv=['repetitionCoderTest'], exit=False)
 
 
+def parse_cmd_args():
+    parser = argparse.ArgumentParser(description="Lossless source coder for encoding and decoding.")
+    subparsers = parser.add_subparsers(dest='command', help='Sub-command to run (encode or decode)')
+
+    # Encode sub-command
+    parser_encode = subparsers.add_parser('encode', help='Encode a source file')
+    parser_encode.add_argument('LEN', type=int, help='int, code length n, must be odd number and 2 < n < 10')
+    parser_encode.add_argument('INPUT', type=str, help='Path to the encoder input file')
+    parser_encode.add_argument('OUTPUT', type=str, help='Path to the encoder output file')
+
+    # Decode sub-command
+    parser_decode = subparsers.add_parser('decode', help='Decode an encoded file')
+    parser_decode.add_argument('INPUT', type=str, help='Path to the decoder input file')
+    parser_decode.add_argument('OUTPUT', type=str, help='Path to the decoder output file')
+
+    parser.add_argument('-t', '--test', action='store_true', help='Check test flow and state')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show message')
+
+    args = parser.parse_args()
+    return dict(
+        command=args.command,
+        LEN=args.LEN,
+        INPUT=args.INPUT,
+        OUTPUT=args.OUTPUT,
+        test=args.test,
+        verbose=args.verbose
+    )
+
+
 # 主程序入口
 if __name__ == '__main__':
-    main()
+    kwgs = parse_cmd_args()
+    main(**kwgs)

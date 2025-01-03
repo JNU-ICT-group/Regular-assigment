@@ -21,7 +21,7 @@ import argparse
 import numpy as np
 import csv
 
-bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
+from generate import bit_counts
 
 def main(input_path, encode_path, output_path, **kwgs):
     input_paths = path_split(input_path)

@@ -16,8 +16,8 @@ import argparse
 import numpy as np
 import csv
 
+from generate import bit_counts
 
-bit_counts = np.uint8(bytearray(map(int.bit_count, range(256))))
 
 def main(input_path, output_path, **kwgs) -> [float]:
     if kwgs.get('base_path'):

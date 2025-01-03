@@ -1,0 +1,7 @@
+__pycache__/
+BSC.*.dat
+DMS.*.dat
+HC.*.dat
+RC.*.dat
+DMS.p0=*.csv
+/data/case_*/
